@@ -17,16 +17,16 @@
 | **Team Name** | RREF COLLECTION |
 | **Team Domain** | Domain 2 — Orbyte Smart SME Challenge |
 | **SDG Track** | **SDG 8** — Decent Work and Economic Growth *(primary)* · **SDG 9** — Industry, Innovation and Infrastructure *(secondary)* |
-| **Team Leader** | `TODO: 填姓名` |
+| **Team Leader** | XIE KAIRUI (`@Carrey82`) |
 | **University** | Xiamen University Malaysia |
-| **Number of Members** | `TODO: 填人数` |
+| **Number of Members** | `TODO` |
 
 ## Links
 
 | Resource | Link |
 | --- | --- |
-| GitHub Repository | https://github.com/`TODO-username`/rref-collection-sdc |
-| Replit Project | https://replit.com/@`TODO-username`/rref-collection-sdc |
+| GitHub Repository | https://github.com/Carrey82/rref-collection-sdc |
+| Replit Project | https://replit.com/@Carrey7070/rref-collection-sdc |
 | Live Demo | https://`TODO`.replit.app |
 | RunPod Endpoint | Not used — no GPU workload in this prototype |
 | Slide Deck | `TODO` |
