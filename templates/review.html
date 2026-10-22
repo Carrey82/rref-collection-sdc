@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Review · {{invoice_no}} · {{app}}</title>
+<style>{{style}}</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="in">
+    <div class="brand"><span class="dot"></span>{{app}} <small>{{team}}</small></div>
+    <div class="nav">
+      <a href="/">← Queue</a>
+      <a href="/audit">Audit log</a>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  {{banner}}
+
+  <div class="hero">
+    <div class="txt">
+      <h1>Review before sending</h1>
+      <p class="lead">The system drafted this. It has <b>not</b> been sent.
+        Edit it if the tone is wrong, then approve — or skip the customer entirely.</p>
+    </div>
+  </div>
+
+  <div class="review">
+
+    <div class="panel" style="margin-bottom:0">
+      <div class="head">
+        <h2>Draft message</h2>
+        <span class="chip {{bucket_cls}}">{{bucket}}</span>
+        <span class="chip chip-gray" style="margin-left:auto">{{src_label}}</span>
+      </div>
+      <div class="body">
+        <form method="post" action="/decide">
+          <input type="hidden" name="id" value="{{id}}">
+          <div class="field">
+            <label>Message body — everything in this box is what gets recorded</label>
+            <textarea name="text">{{draft}}</textarea>
+          </div>
+          <div class="field" style="max-width:280px">
+            <label>Approved by</label>
+            <input name="actor" value="RREF COLLECTION" maxlength="60">
+          </div>
+          <div class="row2">
+            <button class="btn green" type="submit" name="action" value="approve">Approve &amp; log →</button>
+            <button class="btn ghost" type="submit" name="action" value="skip"
+              onclick="return confirm('Skip this customer without sending?')">Skip this one</button>
+          </div>
+          <p class="hint">Approving does not send email in this prototype — it records the decision
+            and the final text. Wiring an email API is a 20-line change; we kept it out so nothing
+            can be sent by accident during the demo.</p>
+        </form>
+      </div>
+    </div>
+
+    <div>
+      <div class="panel">
+        <div class="head"><h2>Invoice facts</h2></div>
+        <div class="body" style="padding-top:8px;padding-bottom:8px">
+          <div class="fact"><span class="l">Invoice</span><span class="r mono">{{invoice_no}}</span></div>
+          <div class="fact"><span class="l">Customer</span><span class="r">{{customer}}</span></div>
+          <div class="fact"><span class="l">Contact</span><span class="r">{{contact}}<div class="sub">{{email}}</div></span></div>
+          <div class="fact"><span class="l">Amount</span><span class="r">{{amount}} {{currency}}</span></div>
+          <div class="fact"><span class="l">Due date</span><span class="r">{{due_date}}</span></div>
+          <div class="fact"><span class="l">Days overdue</span><span class="r">{{days}}</span></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="head"><h2>Why this tone</h2></div>
+        <div class="body">
+          <p style="margin:0;font-size:13.2px;color:var(--ink2)">{{suggestion}}</p>
+          <p class="hint" style="margin-top:10px">Rule-based, not model-based. Aging buckets are in
+            <code>src/logic.py</code> — deterministic, unit-tested, and explainable if a judge asks.</p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="head"><h2>Payment history</h2></div>
+        <div class="body">
+          <p style="margin:0;font-size:13.2px;color:var(--ink2)">{{history}}</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<footer>
+  <span>{{app}} · {{team}}</span>
+  <span class="sp">Step 4 of 5 — human approval</span>
+</footer>
+</body>
+</html>

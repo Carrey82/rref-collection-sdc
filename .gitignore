@@ -1,0 +1,23 @@
+# ---- runtime state (regenerated from data/invoices.json) ----
+data/state.json
+data/audit_log.jsonl
+
+# ---- secrets: NEVER commit ----
+.env
+.env.local
+*.key
+*.pem
+
+# ---- python ----
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# ---- os / editor ----
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.log

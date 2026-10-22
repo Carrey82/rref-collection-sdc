@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{app}} · Overdue receivables, closed loop</title>
+<style>{{style}}</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="in">
+    <div class="brand"><span class="dot"></span>{{app}} <small>{{team}}</small></div>
+    <div class="nav">
+      <a href="/">Queue</a>
+      <a href="/audit">Audit log</a>
+      <a href="/reset">Reset demo</a>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  {{banner}}
+
+  <div class="hero">
+    <div class="txt">
+      <h1>Overdue receivables, closed loop</h1>
+      <p class="lead">Every reminder is drafted by the system and <b>sent by a human</b>.
+        Nothing leaves this page without a person clicking approve.</p>
+    </div>
+    <div class="act">
+      <span class="chip {{llm_cls}}">{{llm_state}}</span>
+      <form method="post" action="/scan" style="margin:0">
+        <button class="btn" type="submit">Run today's scan →</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="cards">{{cards}}</div>
+
+  <div class="panel">
+    <div class="head">
+      <h2>Work queue</h2>
+      <span class="chip chip-gray">sorted by priority = amount × √days</span>
+      <span class="chip chip-gray" style="margin-left:auto">scans: {{scans}}</span>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Invoice</th><th>Customer</th><th class="right">Amount</th>
+          <th class="right">Overdue</th><th>Aging</th><th>Status</th><th></th>
+        </tr>
+      </thead>
+      <tbody>{{rows}}</tbody>
+    </table>
+  </div>
+
+  <div class="panel">
+    <div class="head">
+      <h2>What this saved you</h2>
+      <span class="chip chip-green">≈ {{saved_hours}} h saved</span>
+    </div>
+    <div class="body">
+      <p style="margin:0;font-size:13.4px;color:var(--ink2)">
+        Manual reminder = ~12 min per invoice (find the record, check for payment,
+        write the email, verify details, file it). Reviewed draft = ~1 min.
+        You have approved <b>{{approved}}</b> this session → <b>{{saved_hours}} hours</b> not
+        spent on typing, and every action is logged.
+      </p>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="head"><h2>Latest audit entries</h2><a href="/audit" style="margin-left:auto;font-size:12.5px">View all →</a></div>
+    <div class="body">{{audit_tail}}</div>
+  </div>
+
+</div>
+
+<footer>
+  <span>{{app}} · {{team}}</span>
+  <span>Replit deployment · Apache-2.0</span>
+  <span class="sp">Human-in-the-loop by design</span>
+</footer>
+</body>
+</html>

@@ -1,0 +1,96 @@
+{
+  "_note": "Synthetic data. Every company, contact and amount is invented — no real personal data, per the SDC data rules. Dates are fixed in Sep-Oct 2026 so that all four ageing buckets are populated whenever the demo is opened.",
+  "invoices": [
+    {
+      "id": "inv-0412",
+      "invoice_no": "INV-2026-0412",
+      "customer": "Tan Hardware Sdn Bhd",
+      "contact_name": "Mr. Tan Wei Ming",
+      "contact_email": "accounts@tanhardware.example",
+      "amount": 12500.0,
+      "currency": "MYR",
+      "due_date": "2026-10-19",
+      "paid": false,
+      "company": "RREF Supply & Trading",
+      "history_note": "3 years of history — all 11 previous invoices paid within 5 days of the due date, never more than 10 days late."
+    },
+    {
+      "id": "inv-0398",
+      "invoice_no": "INV-2026-0398",
+      "customer": "Kedai Elektrik Jaya",
+      "contact_name": "Puan Siti Aminah",
+      "contact_email": "jaya.elektrik@example.my",
+      "amount": 4820.5,
+      "currency": "MYR",
+      "due_date": "2026-10-10",
+      "paid": false,
+      "company": "RREF Supply & Trading",
+      "history_note": "First time late. Mentioned cash-flow pressure last month."
+    },
+    {
+      "id": "inv-0361",
+      "invoice_no": "INV-2026-0361",
+      "customer": "Sunrise Packaging (M) Sdn Bhd",
+      "contact_name": "Ms. Lim Hui Ying",
+      "contact_email": "ap@sunrisepack.example",
+      "amount": 28900.0,
+      "currency": "MYR",
+      "due_date": "2026-09-15",
+      "paid": false,
+      "company": "RREF Supply & Trading",
+      "history_note": "Largest invoice on the book. Two promised payment dates have already passed — keep a written record."
+    },
+    {
+      "id": "inv-0355",
+      "invoice_no": "INV-2026-0355",
+      "customer": "Greenleaf Cafe",
+      "contact_name": "Mr. Daniel Wong",
+      "contact_email": "daniel@greenleaf.example",
+      "amount": 1980.0,
+      "currency": "MYR",
+      "due_date": "2026-10-05",
+      "paid": false,
+      "company": "RREF Supply & Trading",
+      "history_note": "Small account. Usually pays 10-20 days late, never defaulted."
+    },
+    {
+      "id": "inv-0322",
+      "invoice_no": "INV-2026-0322",
+      "customer": "Ah Seng Trading",
+      "contact_name": "Mr. Goh Ah Seng",
+      "contact_email": "ahseng.trading@example.my",
+      "amount": 3150.0,
+      "currency": "MYR",
+      "due_date": "2026-08-05",
+      "paid": false,
+      "company": "RREF Supply & Trading",
+      "history_note": "Chased three times, no reply, phone unanswered. Owner should review before escalating."
+    },
+    {
+      "id": "inv-0430",
+      "invoice_no": "INV-2026-0430",
+      "customer": "Metro Build Supplies",
+      "contact_name": "Ms. Farah Idris",
+      "contact_email": "farah@metrobuild.example",
+      "amount": 7600.0,
+      "currency": "MYR",
+      "due_date": "2026-10-28",
+      "paid": false,
+      "company": "RREF Supply & Trading",
+      "history_note": "Not due yet — this row proves the system does not bother customers early."
+    },
+    {
+      "id": "inv-0301",
+      "invoice_no": "INV-2026-0301",
+      "customer": "Pacific Auto Parts",
+      "contact_name": "Ms. Angelina Raj",
+      "contact_email": "ap@pacificauto.example",
+      "amount": 2200.0,
+      "currency": "MYR",
+      "due_date": "2026-09-01",
+      "paid": true,
+      "company": "RREF Supply & Trading",
+      "history_note": "Settled — this row proves the system does not chase money already paid."
+    }
+  ]
+}

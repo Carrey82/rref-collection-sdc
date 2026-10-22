@@ -1,0 +1,14 @@
+run = "python3 src/app.py"
+entrypoint = "src/app.py"
+modules = ["python-3.11"]
+
+[nix]
+channel = "stable-24_05"
+
+[[ports]]
+localPort = 8080
+externalPort = 80
+
+[deployment]
+run = ["sh", "-c", "python3 src/app.py"]
+deploymentTarget = "autoscale"

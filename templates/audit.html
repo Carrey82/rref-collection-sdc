@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Audit log · {{app}}</title>
+<style>{{style}}</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="in">
+    <div class="brand"><span class="dot"></span>{{app}} <small>{{team}}</small></div>
+    <div class="nav">
+      <a href="/">Queue</a>
+      <a href="/audit">Audit log</a>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="hero">
+    <div class="txt">
+      <h1>Append-only audit trail</h1>
+      <p class="lead">Every decision — including skipped customers — is written with who, when,
+        what, and the final text. Each entry carries the hash of the one before it, so a deleted
+        or edited row breaks the chain.</p>
+    </div>
+    <div class="act"><span class="chip chip-gray">{{count}} entries</span></div>
+  </div>
+
+  <div class="panel"><div class="body">{{rows}}</div></div>
+
+  <div class="panel">
+    <div class="head"><h2>Why this matters</h2></div>
+    <div class="body">
+      <p style="margin:0;font-size:13.3px;color:var(--ink2)">
+        In an SME, the person who chases payment is usually the owner. When they are on leave,
+        nobody knows which customers were contacted, how firmly, or what was promised.
+        This log answers that in one screen — and it is the part of automation that most
+        "AI tools" skip.
+      </p>
+    </div>
+  </div>
+</div>
+
+<footer><span>{{app}} · {{team}}</span><span class="sp">Step 5 of 5 — traceability</span></footer>
+</body>
+</html>

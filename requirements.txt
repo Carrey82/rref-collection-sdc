@@ -1,0 +1,7 @@
+# 本项目刻意不依赖任何第三方库。
+#
+# 只用 Python 标准库：http.server / json / urllib / hashlib / unittest
+# 理由：hackathon 里最常见的翻车原因是 pip 装不上或版本冲突。
+# 零依赖 = Replit 上点 Run 就能起，不用等构建。
+#
+# 如果要接别的服务，在这一行下面加，并在 README 的 Tech Stack 里同步说明。

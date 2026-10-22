@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Something broke · {{app}}</title>
+<style>{{style}}</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="in"><div class="brand"><span class="dot"></span>{{app}}</div>
+  <div class="nav"><a href="/">Queue</a></div></div>
+</div>
+<div class="wrap">
+  <div class="banner warn"><b>Something went wrong.</b><br>{{msg}}</div>
+  <p class="lead">This page exists on purpose: during a live demo, a stack trace on screen is
+    worse than a clear error. Go back to the queue and try the action again.</p>
+  <a class="btn" href="/">← Back to queue</a>
+</div>
+<footer><span>{{app}} · {{team}}</span></footer>
+</body>
+</html>
