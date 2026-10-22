@@ -5,6 +5,7 @@ CollectLoop · 数据存取层
 评委点开链接的那一刻，任何一次数据库连接失败都是致命的。
 
 data/invoices.json  只读种子数据（已提交进仓库）
+data/orbyte_export.sample.json  Orbyte 结构的样本（src/orbyte.py 归一化后使用）
 data/state.json     运行时状态（首次运行时从种子复制，已 .gitignore）
 data/audit_log.jsonl 审计留痕，追加写，永不修改历史
 """
@@ -42,14 +43,38 @@ def _write(path, obj):
     os.replace(tmp, path)  # 原子替换，避免半写坏文件
 
 
+def _load_seed() -> dict:
+    """
+    种子优先来自 Orbyte 适配层（Domain 2 must-have: Orbyte fit and reuse）。
+    适配层出任何问题都回退到本地 invoices.json —— 演示绝不因数据源白屏。
+    """
+    try:
+        import orbyte
+        seed = orbyte.load()
+        if seed.get("invoices"):
+            return seed
+    except Exception:
+        pass
+    return _read(SEED_PATH, {"invoices": []})
+
+
 def load_state():
-    """读运行时状态；不存在则从种子初始化。"""
+    """
+    读运行时状态；不存在则从种子初始化。
+
+    种子带 seed_version：一旦 data/invoices.json 的结构升级（例如加入了
+    承诺台账），旧的 state.json 会自动按新种子重建，不需要手动删文件或点 Reset。
+    这个机制是为了演示：评委点开链接时看到的必须是最新数据。
+    """
     with _lock:
         state = _read(STATE_PATH, None)
-        if state is None:
-            seed = _read(SEED_PATH, {"invoices": []})
+        seed = _load_seed()
+        seed_version = seed.get("seed_version", 1)
+
+        if state is None or state.get("seed_version", 1) != seed_version:
             state = {
                 "created_at": now_iso(),
+                "seed_version": seed_version,
                 "total_scans": 0,
                 "invoices": [
                     dict(inv, status="pending", draft=None, decided_by=None,

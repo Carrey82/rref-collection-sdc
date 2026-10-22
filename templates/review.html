@@ -25,8 +25,9 @@
   <div class="hero">
     <div class="txt">
       <h1>Review before sending</h1>
-      <p class="lead">The system drafted this. It has <b>not</b> been sent.
-        Edit it if the tone is wrong, then approve — or skip the customer entirely.</p>
+      <p class="lead">The promise ledger on the right decides the tone. If the customer kept
+        their word before, the message is softer. If they broke a date they gave you,
+        <b>the message says so</b> — with the date they chose.</p>
     </div>
   </div>
 
@@ -63,6 +64,42 @@
 
     <div>
       <div class="panel">
+        <div class="head">
+          <h2>Promise ledger</h2>
+          <span class="chip {{bucket_cls}}" style="margin-left:auto">{{promise_label}}</span>
+        </div>
+        <div class="body" style="padding-top:8px;padding-bottom:10px">
+          {{ledger}}
+          <p class="hint" style="margin-top:6px">{{kept_rate}}.</p>
+        </div>
+        <div class="body" style="border-top:1px solid var(--line);background:#fbfcfd">
+          <form method="post" action="/promise" class="pform">
+            <input type="hidden" name="id" value="{{id}}">
+            <div class="field" style="margin-bottom:10px">
+              <label>Record what the customer promised</label>
+              <div class="row3">
+                <input type="date" name="promised_for" required>
+                <select name="channel">
+                  <option>Phone</option>
+                  <option>WhatsApp</option>
+                  <option>Email</option>
+                  <option>In person</option>
+                </select>
+                <input name="actor" value="RREF COLLECTION" maxlength="60">
+              </div>
+            </div>
+            <div class="field" style="margin-bottom:10px">
+              <label>What exactly did they say?</label>
+              <input name="note" placeholder="e.g. Payday is the 30th, will transfer after that">
+            </div>
+            <button class="btn ghost" type="submit">Save promise &amp; pause chasing</button>
+            <p class="hint">Saving puts this invoice on hold: no draft, no reminder, until the date
+              passes. The record goes into the audit log with your name on it.</p>
+          </form>
+        </div>
+      </div>
+
+      <div class="panel">
         <div class="head"><h2>Invoice facts</h2></div>
         <div class="body" style="padding-top:8px;padding-bottom:8px">
           <div class="fact"><span class="l">Invoice</span><span class="r mono">{{invoice_no}}</span></div>
@@ -78,13 +115,14 @@
         <div class="head"><h2>Why this tone</h2></div>
         <div class="body">
           <p style="margin:0;font-size:13.2px;color:var(--ink2)">{{suggestion}}</p>
-          <p class="hint" style="margin-top:10px">Rule-based, not model-based. Aging buckets are in
-            <code>src/logic.py</code> — deterministic, unit-tested, and explainable if a judge asks.</p>
+          <p class="hint" style="margin-top:10px">Rule-based, not model-based: aging bucket ×
+            promises broken. Both live in <code>src/logic.py</code> — deterministic, unit-tested,
+            and explainable if a judge asks.</p>
         </div>
       </div>
 
       <div class="panel">
-        <div class="head"><h2>Payment history</h2></div>
+        <div class="head"><h2>Relationship history</h2></div>
         <div class="body">
           <p style="margin:0;font-size:13.2px;color:var(--ink2)">{{history}}</p>
         </div>

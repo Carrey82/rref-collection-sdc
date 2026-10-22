@@ -1,5 +1,7 @@
 {
-  "_note": "Synthetic data. Every company, contact and amount is invented — no real personal data, per the SDC data rules. Dates are fixed in Sep-Oct 2026 so that all four ageing buckets are populated whenever the demo is opened.",
+  "seed_version": 2,
+  "_note": "Synthetic data. Every company, contact and amount is invented — no real personal data, per the SDC data rules. Dates are fixed around Oct 2026 so that every state is populated whenever the demo is opened: on promise, promise broken, no promise yet, not due, already paid.",
+  "_concept": "Each invoice carries a promise ledger. The product tracks what the customer PROMISED, not just what they owe. A promise that is still open means we deliberately do not chase.",
   "invoices": [
     {
       "id": "inv-0412",
@@ -12,7 +14,23 @@
       "due_date": "2026-10-19",
       "paid": false,
       "company": "RREF Supply & Trading",
-      "history_note": "3 years of history — all 11 previous invoices paid within 5 days of the due date, never more than 10 days late."
+      "history_note": "3 years of history — 11 of 12 invoices paid within 5 days of the due date. This is the first time they have needed a reminder.",
+      "relationship": {
+        "months": 36,
+        "invoices_total": 12,
+        "promises_total": 9,
+        "promises_kept": 8
+      },
+      "promises": [
+        {
+          "recorded_at": "2026-10-20",
+          "promised_for": "2026-10-26",
+          "channel": "Phone",
+          "recorded_by": "Aisyah (admin)",
+          "note": "Mr Tan said the cheque is being prepared, will bank in by Monday.",
+          "kept": null
+        }
+      ]
     },
     {
       "id": "inv-0398",
@@ -25,7 +43,14 @@
       "due_date": "2026-10-10",
       "paid": false,
       "company": "RREF Supply & Trading",
-      "history_note": "First time late. Mentioned cash-flow pressure last month."
+      "history_note": "First time late in 8 months. Mentioned cash-flow pressure last month — worth a soft tone before anything firm.",
+      "relationship": {
+        "months": 8,
+        "invoices_total": 7,
+        "promises_total": 2,
+        "promises_kept": 2
+      },
+      "promises": []
     },
     {
       "id": "inv-0361",
@@ -38,7 +63,31 @@
       "due_date": "2026-09-15",
       "paid": false,
       "company": "RREF Supply & Trading",
-      "history_note": "Largest invoice on the book. Two promised payment dates have already passed — keep a written record."
+      "history_note": "Largest invoice on the book. Two payment dates were promised verbally and both passed without payment. Owner should sign off before this one goes out.",
+      "relationship": {
+        "months": 14,
+        "invoices_total": 9,
+        "promises_total": 2,
+        "promises_kept": 0
+      },
+      "promises": [
+        {
+          "recorded_at": "2026-10-02",
+          "promised_for": "2026-10-08",
+          "channel": "Phone",
+          "recorded_by": "Aisyah (admin)",
+          "note": "First promise: 'after the 7th, once our customer pays'.",
+          "kept": false
+        },
+        {
+          "recorded_at": "2026-10-12",
+          "promised_for": "2026-10-18",
+          "channel": "WhatsApp",
+          "recorded_by": "Aisyah (admin)",
+          "note": "Second promise: 'confirmed, this Friday for sure'. Nothing arrived.",
+          "kept": false
+        }
+      ]
     },
     {
       "id": "inv-0355",
@@ -51,7 +100,23 @@
       "due_date": "2026-10-05",
       "paid": false,
       "company": "RREF Supply & Trading",
-      "history_note": "Small account. Usually pays 10-20 days late, never defaulted."
+      "history_note": "Small account, usually pays 10–20 days late, never defaulted. One promise missed so far — still a relationship worth protecting.",
+      "relationship": {
+        "months": 22,
+        "invoices_total": 18,
+        "promises_total": 3,
+        "promises_kept": 2
+      },
+      "promises": [
+        {
+          "recorded_at": "2026-10-14",
+          "promised_for": "2026-10-19",
+          "channel": "WhatsApp",
+          "recorded_by": "Aisyah (admin)",
+          "note": "'Payday is the 18th, will transfer after that.'",
+          "kept": false
+        }
+      ]
     },
     {
       "id": "inv-0322",
@@ -64,7 +129,14 @@
       "due_date": "2026-08-05",
       "paid": false,
       "company": "RREF Supply & Trading",
-      "history_note": "Chased three times, no reply, phone unanswered. Owner should review before escalating."
+      "history_note": "Chased three times, no reply, phone unanswered. Never made a promise. Owner should review before this escalates.",
+      "relationship": {
+        "months": 5,
+        "invoices_total": 4,
+        "promises_total": 1,
+        "promises_kept": 0
+      },
+      "promises": []
     },
     {
       "id": "inv-0430",
@@ -77,7 +149,14 @@
       "due_date": "2026-10-28",
       "paid": false,
       "company": "RREF Supply & Trading",
-      "history_note": "Not due yet — this row proves the system does not bother customers early."
+      "history_note": "Not due yet — this row proves the system does not bother customers before the due date.",
+      "relationship": {
+        "months": 30,
+        "invoices_total": 15,
+        "promises_total": 0,
+        "promises_kept": 0
+      },
+      "promises": []
     },
     {
       "id": "inv-0301",
@@ -90,7 +169,23 @@
       "due_date": "2026-09-01",
       "paid": true,
       "company": "RREF Supply & Trading",
-      "history_note": "Settled — this row proves the system does not chase money already paid."
+      "history_note": "Settled — this row proves the system does not chase money that has already been paid.",
+      "relationship": {
+        "months": 40,
+        "invoices_total": 24,
+        "promises_total": 4,
+        "promises_kept": 4
+      },
+      "promises": [
+        {
+          "recorded_at": "2026-09-12",
+          "promised_for": "2026-09-18",
+          "channel": "Email",
+          "recorded_by": "Aisyah (admin)",
+          "note": "Promised 18 Sep, paid on 18 Sep.",
+          "kept": true
+        }
+      ]
     }
   ]
 }

@@ -1,7 +1,12 @@
 # CollectLoop
 
-> An SME-safe collections loop: the system drafts every overdue-payment reminder,
-> a human approves each one, and nothing leaves the building unlogged.
+> **We chase the promise, not the invoice.**
+>
+> A small supplier does not lose money because it cannot write a stern email. It loses money
+> because nobody remembers what the customer promised. CollectLoop keeps every verbal promise
+> on record — who said it, when, on which channel, whether it was kept — drafts the message
+> only when the promise is gone, and stays quiet while it is still good. A human approves
+> every send. Nothing leaves the building unlogged.
 
 ---
 
@@ -48,21 +53,46 @@ Because it is done in fragments, three things break:
 3. **It is the first task dropped.** Late reminders mean later cash, which is exactly the
    problem an SME cannot absorb.
 
+There is a fourth failure, and it costs more than the other three: **the promise is never
+written down.** Three of the customers below have already named a payment date — on a call,
+in a WhatsApp thread nobody scrolls back through. So the owner either chases someone who
+already promised (spending goodwill for nothing) or forgets the one who broke a date they
+chose. Neither is a typing problem. Both are a memory problem, and no reminder template
+solves a memory problem.
+
 ### Solution
 
 CollectLoop runs the deterministic part automatically and stops before the part that
 needs judgement.
 
-It sweeps the invoice book, sorts by real urgency (amount × √days overdue), places each
-customer in an ageing bucket, and drafts a reminder in the tone that bucket calls for.
-Then it **stops**. A person opens each draft, edits it if the tone is wrong, and either
-approves or skips the customer. Every decision is written to an append-only log with a
-hash chain, so the record cannot be quietly edited later.
+Its unit of work is not the invoice — it is the **promise**. Every customer carries a small
+ledger: each entry records what was promised, for which date, through which channel, by whom,
+and whether it was kept. That ledger decides everything downstream:
+
+- **No promise on record** → draft the first message, in the tone the ageing bucket calls for.
+- **Promise still open** → draft nothing. The invoice is held, and "held" is a real outcome the
+  dashboard counts, because the right action this week is to wait.
+- **Promise broken** → draft, and quote the date they chose back at them. Two breaches
+  escalate the tone even on a young invoice, and multiply its queue priority.
+
+Then it **stops**. A person opens each draft, edits it, and approves or skips. When the customer
+calls with a new date, the same person records it in three fields — which discards the draft and
+puts the invoice back on hold. Every decision and every promise is written to an append-only log
+with a hash chain, so nothing can be quietly edited later.
 
 ### Key Features
 
-- **Rule-based urgency, not vibes** — ageing buckets and priority scoring live in one
-  testable file (`src/logic.py`), so a judge can ask "why this tone?" and get a file path.
+- **A promise ledger, not a chatbot** — the decision layer is deterministic and unit-tested
+  (23 tests): who to contact, when to stay silent, which tone. The model only writes prose, and
+  the product still works with no model configured at all.
+- **"Don't chase" is a feature** — an open promise suppresses the draft entirely. Fewer
+  messages sent is the point, not a side effect.
+- **Rule-based urgency, not vibes** — ageing buckets, tone ladder and the breach multiplier
+  live in one testable file (`src/logic.py`), so a judge can ask "why this tone?" and get a
+  file path.
+- **Orbyte-native, not a standalone tool** — identity, approvals, audit trail and customer
+  context come from the platform (`src/orbyte.py`); see `docs/orbyte-integration.md` for
+  exactly what is wired and what is still roadmap.
 - **Drafts, never sends** — the model writes the email body; a human clicks approve.
   Sending is deliberately left unwired in this prototype.
 - **Graceful degradation** — if the model is unreachable or unconfigured, the system falls

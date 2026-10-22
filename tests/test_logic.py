@@ -100,5 +100,76 @@ class TestSavings(unittest.TestCase):
         self.assertEqual(logic.savings_estimate(10)["minutes_saved"], 110)
 
 
+class TestPromises(unittest.TestCase):
+    """承诺台账是本产品的核心：状态机错了，整个价值主张就错了。"""
+
+    def _inv(self, promises=None, amount=1000.0, due="2026-10-05"):
+        return {"id": "p", "invoice_no": "P", "customer": "C", "amount": amount,
+                "due_date": due, "paid": False, "status": "pending",
+                "promises": promises or []}
+
+    def test_no_promise_means_contact(self):
+        ps = logic.promise_state(self._inv(), TODAY)
+        self.assertEqual(ps["state"], "none")
+        self.assertTrue(logic.should_contact(self._inv(), TODAY))
+
+    def test_open_promise_means_hold(self):
+        inv = self._inv([{"promised_for": "2026-10-26", "kept": None, "channel": "Phone"}])
+        ps = logic.promise_state(inv, TODAY)
+        self.assertEqual(ps["state"], "open")
+        self.assertEqual(ps["days_left"], 4)
+        self.assertFalse(logic.should_contact(inv, TODAY))
+        self.assertIn("26", logic.hold_reason(inv, TODAY))
+
+    def test_open_promise_due_today_still_holds(self):
+        inv = self._inv([{"promised_for": "2026-10-22", "kept": None}])
+        self.assertEqual(logic.promise_state(inv, TODAY)["state"], "open")
+
+    def test_open_promise_date_passed_counts_as_broken(self):
+        inv = self._inv([{"promised_for": "2026-10-20", "kept": None}])
+        self.assertEqual(logic.promise_state(inv, TODAY)["state"], "broken")
+
+    def test_marked_broken(self):
+        inv = self._inv([
+            {"promised_for": "2026-10-08", "kept": False},
+            {"promised_for": "2026-10-18", "kept": False},
+        ])
+        ps = logic.promise_state(inv, TODAY)
+        self.assertEqual(ps["state"], "broken")
+        self.assertEqual(ps["broken"], 2)
+        self.assertTrue(logic.should_contact(inv, TODAY))
+
+    def test_kept_promise_does_not_hold(self):
+        inv = self._inv([{"promised_for": "2026-10-20", "kept": True}])
+        self.assertEqual(logic.promise_state(inv, TODAY)["state"], "none")
+
+    def test_two_breaches_escalate_the_tone(self):
+        gentle = logic.tone_of(3, {"broken": 0})
+        self.assertEqual(gentle, "Gentle reminder")
+        self.assertEqual(logic.tone_of(3, {"broken": 2}), "Escalation")
+        self.assertEqual(logic.tone_of(12, {"broken": 1}), "Formal reminder")
+
+    def test_breach_multiplies_priority(self):
+        self.assertGreater(logic.priority_score(1000, 20, broken=2),
+                           logic.priority_score(1000, 20, broken=0))
+
+    def test_kept_rate(self):
+        r = logic.promise_kept_rate({"relationship": {"promises_total": 9, "promises_kept": 8}})
+        self.assertEqual(r["pct"], 89)
+
+    def test_queue_marks_held_rows(self):
+        invoices = [
+            self._inv([{"promised_for": "2026-10-26", "kept": None}]),
+            self._inv([{"promised_for": "2026-10-01", "kept": False}]),
+        ]
+        queue = logic.build_queue(invoices, TODAY)
+        self.assertEqual(len(queue), 2)          # 暂不催的也要显示（用来证明克制）
+        held = [q for q in queue if q["held"]]
+        self.assertEqual(len(held), 1)
+        s = logic.summary(queue)
+        self.assertEqual(s["held"], 1)
+        self.assertEqual(s["broken"], 1)
+
+
 if __name__ == "__main__":
     unittest.main()

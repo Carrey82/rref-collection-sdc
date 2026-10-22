@@ -1,0 +1,255 @@
+{
+  "_note": "Sample payload shaped like an Orbyte export (Connect / accounting partner). Generated for RREF COLLECTION's SDC submission. Every company, contact and amount is synthetic. Field names are Orbyte's; src/orbyte.py maps them to CollectLoop's shape.",
+  "schema_version": 2,
+  "source": "orbyte.connect / modules: payments_collections",
+  "company": "RREF Supply & Trading",
+  "invoices": [
+    {
+      "id": "inv-0412",
+      "document_no": "INV-2026-0412",
+      "counterparty": {
+        "name": "Tan Hardware Sdn Bhd",
+        "contact": {
+          "name": "Mr. Tan Wei Ming",
+          "email": "accounts@tanhardware.example"
+        },
+        "months_on_book": 36,
+        "note": "3 years of history — 11 of 12 invoices paid within 5 days of the due date. This is the first time they have needed a reminder.",
+        "promise_history": {
+          "invoices_total": 12,
+          "promises_total": 9,
+          "promises_kept": 8
+        }
+      },
+      "total": {
+        "amount_minor": 1250000,
+        "currency": "MYR"
+      },
+      "terms": {
+        "due_date": "2026-10-19"
+      },
+      "settlement": {
+        "paid": false
+      },
+      "promises": [
+        {
+          "stated_on": "2026-10-20",
+          "for_date": "2026-10-26",
+          "via": "phone",
+          "logged_by": "Aisyah (admin)",
+          "outcome": "open",
+          "verbatim": "Mr Tan said the cheque is being prepared, will bank in by Monday."
+        }
+      ]
+    },
+    {
+      "id": "inv-0398",
+      "document_no": "INV-2026-0398",
+      "counterparty": {
+        "name": "Kedai Elektrik Jaya",
+        "contact": {
+          "name": "Puan Siti Aminah",
+          "email": "jaya.elektrik@example.my"
+        },
+        "months_on_book": 8,
+        "note": "First time late in 8 months. Mentioned cash-flow pressure last month — worth a soft tone before anything firm.",
+        "promise_history": {
+          "invoices_total": 7,
+          "promises_total": 2,
+          "promises_kept": 2
+        }
+      },
+      "total": {
+        "amount_minor": 482050,
+        "currency": "MYR"
+      },
+      "terms": {
+        "due_date": "2026-10-10"
+      },
+      "settlement": {
+        "paid": false
+      },
+      "promises": []
+    },
+    {
+      "id": "inv-0361",
+      "document_no": "INV-2026-0361",
+      "counterparty": {
+        "name": "Sunrise Packaging (M) Sdn Bhd",
+        "contact": {
+          "name": "Ms. Lim Hui Ying",
+          "email": "ap@sunrisepack.example"
+        },
+        "months_on_book": 14,
+        "note": "Largest invoice on the book. Two payment dates were promised verbally and both passed without payment. Owner should sign off before this one goes out.",
+        "promise_history": {
+          "invoices_total": 9,
+          "promises_total": 2,
+          "promises_kept": 0
+        }
+      },
+      "total": {
+        "amount_minor": 2890000,
+        "currency": "MYR"
+      },
+      "terms": {
+        "due_date": "2026-09-15"
+      },
+      "settlement": {
+        "paid": false
+      },
+      "promises": [
+        {
+          "stated_on": "2026-10-02",
+          "for_date": "2026-10-08",
+          "via": "phone",
+          "logged_by": "Aisyah (admin)",
+          "outcome": "broken",
+          "verbatim": "First promise: 'after the 7th, once our customer pays'."
+        },
+        {
+          "stated_on": "2026-10-12",
+          "for_date": "2026-10-18",
+          "via": "whatsapp",
+          "logged_by": "Aisyah (admin)",
+          "outcome": "broken",
+          "verbatim": "Second promise: 'confirmed, this Friday for sure'. Nothing arrived."
+        }
+      ]
+    },
+    {
+      "id": "inv-0355",
+      "document_no": "INV-2026-0355",
+      "counterparty": {
+        "name": "Greenleaf Cafe",
+        "contact": {
+          "name": "Mr. Daniel Wong",
+          "email": "daniel@greenleaf.example"
+        },
+        "months_on_book": 22,
+        "note": "Small account, usually pays 10–20 days late, never defaulted. One promise missed so far — still a relationship worth protecting.",
+        "promise_history": {
+          "invoices_total": 18,
+          "promises_total": 3,
+          "promises_kept": 2
+        }
+      },
+      "total": {
+        "amount_minor": 198000,
+        "currency": "MYR"
+      },
+      "terms": {
+        "due_date": "2026-10-05"
+      },
+      "settlement": {
+        "paid": false
+      },
+      "promises": [
+        {
+          "stated_on": "2026-10-14",
+          "for_date": "2026-10-19",
+          "via": "whatsapp",
+          "logged_by": "Aisyah (admin)",
+          "outcome": "broken",
+          "verbatim": "'Payday is the 18th, will transfer after that.'"
+        }
+      ]
+    },
+    {
+      "id": "inv-0322",
+      "document_no": "INV-2026-0322",
+      "counterparty": {
+        "name": "Ah Seng Trading",
+        "contact": {
+          "name": "Mr. Goh Ah Seng",
+          "email": "ahseng.trading@example.my"
+        },
+        "months_on_book": 5,
+        "note": "Chased three times, no reply, phone unanswered. Never made a promise. Owner should review before this escalates.",
+        "promise_history": {
+          "invoices_total": 4,
+          "promises_total": 1,
+          "promises_kept": 0
+        }
+      },
+      "total": {
+        "amount_minor": 315000,
+        "currency": "MYR"
+      },
+      "terms": {
+        "due_date": "2026-08-05"
+      },
+      "settlement": {
+        "paid": false
+      },
+      "promises": []
+    },
+    {
+      "id": "inv-0430",
+      "document_no": "INV-2026-0430",
+      "counterparty": {
+        "name": "Metro Build Supplies",
+        "contact": {
+          "name": "Ms. Farah Idris",
+          "email": "farah@metrobuild.example"
+        },
+        "months_on_book": 30,
+        "note": "Not due yet — this row proves the system does not bother customers before the due date.",
+        "promise_history": {
+          "invoices_total": 15,
+          "promises_total": 0,
+          "promises_kept": 0
+        }
+      },
+      "total": {
+        "amount_minor": 760000,
+        "currency": "MYR"
+      },
+      "terms": {
+        "due_date": "2026-10-28"
+      },
+      "settlement": {
+        "paid": false
+      },
+      "promises": []
+    },
+    {
+      "id": "inv-0301",
+      "document_no": "INV-2026-0301",
+      "counterparty": {
+        "name": "Pacific Auto Parts",
+        "contact": {
+          "name": "Ms. Angelina Raj",
+          "email": "ap@pacificauto.example"
+        },
+        "months_on_book": 40,
+        "note": "Settled — this row proves the system does not chase money that has already been paid.",
+        "promise_history": {
+          "invoices_total": 24,
+          "promises_total": 4,
+          "promises_kept": 4
+        }
+      },
+      "total": {
+        "amount_minor": 220000,
+        "currency": "MYR"
+      },
+      "terms": {
+        "due_date": "2026-09-01"
+      },
+      "settlement": {
+        "paid": true
+      },
+      "promises": [
+        {
+          "stated_on": "2026-09-12",
+          "for_date": "2026-09-18",
+          "via": "email",
+          "logged_by": "Aisyah (admin)",
+          "outcome": "kept",
+          "verbatim": "Promised 18 Sep, paid on 18 Sep."
+        }
+      ]
+    }
+  ]
+}

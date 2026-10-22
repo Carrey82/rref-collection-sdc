@@ -24,6 +24,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import llm
 import logic
+import orbyte
 import store
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -70,10 +71,10 @@ BUCKET_CHIP = {
 
 def cards(s: dict) -> str:
     items = [
-        ("Overdue invoices", f'{s["overdue_count"]}', "waiting"),
+        ("Overdue invoices", f'{s["overdue_count"]}', "on the books"),
         ("Overdue value", f'{s["overdue_amount"]:,.0f}', "MYR total"),
-        ("Awaiting your review", f'{s["pending_review"]}', "drafted"),
-        ("Avg days overdue", f'{s["avg_days"]}', "days"),
+        ("On promise · held", f'{s["held"]}', "not contacted"),
+        ("Promises broken", f'{s["broken"]}', "dates that slipped"),
     ]
     return "".join(
         f'<div class="card"><div class="k">{esc(k)}</div>'
@@ -82,28 +83,72 @@ def cards(s: dict) -> str:
     )
 
 
+PROMISE_CHIP = {"open": "chip-green", "broken": "chip-red", "none": "chip-gray"}
+
+
+def promise_cell(q: dict) -> str:
+    """队列里的"承诺"列。这一列是整个产品的差异点，所以信息密度给足。"""
+    ps = q.get("promise") or {}
+    st = ps.get("state", "none")
+    rel = q.get("kept_rate") or {}
+    rate = (f"{rel.get('kept')}/{rel.get('total')} kept"
+            if rel.get("total") else "no history")
+    if st == "open":
+        main = f"Promised {ps.get('last_promised_for')}"
+        sub = f"{ps.get('days_left')} day(s) left · {rate}"
+    elif st == "broken":
+        main = f"Broken ×{ps.get('broken', 1)}"
+        sub = f"was {ps.get('last_promised_for')} · {rate}"
+    else:
+        main = "No promise"
+        sub = rate
+    return (f'<span class="chip {PROMISE_CHIP.get(st, "chip-gray")}">{esc(main)}</span>'
+            f'<div class="sub">{esc(sub)}</div>')
+
+
 def rows(queue: list) -> str:
     if not queue:
-        return ('<tr><td colspan="7" class="empty">还没有数据。点上面的'
-                '「运行今日扫描」开始。</td></tr>')
+        return ('<tr><td colspan="8" class="empty">No data yet. Click '
+                '"Run today\'s scan" above to start.</td></tr>')
     out = []
     for q in queue:
         label, cls = STATUS_CHIP.get(q.get("status", "pending"), ("—", "chip-gray"))
-        bcls = BUCKET_CHIP.get(q.get("bucket", ""), "chip-gray")
-        action = (f'<a class="btn-sm" href="/review/{esc(q["id"])}">Review</a>'
-                  if q.get("status") == "drafted"
-                  else (f'<a class="btn-sm ghost" href="/review/{esc(q["id"])}">View</a>'
-                        if q.get("status") in ("approved", "skipped") else
-                        '<span class="muted">—</span>'))
+        tone = q.get("tone") or q.get("bucket") or ""
+        bcls = BUCKET_CHIP.get(tone, "chip-gray")
+        age_sub = (f'<div class="sub">age: {esc(q.get("bucket"))}</div>'
+                   if tone != q.get("bucket") else "")
+        if q.get("held"):
+            action = (f'<a class="btn-sm ghost" href="/review/{esc(q["id"])}">Why?</a>')
+        elif q.get("status") == "drafted":
+            action = f'<a class="btn-sm" href="/review/{esc(q["id"])}">Review</a>'
+        elif q.get("status") in ("approved", "skipped"):
+            action = f'<a class="btn-sm ghost" href="/review/{esc(q["id"])}">View</a>'
+        else:
+            action = '<span class="muted">—</span>'
         out.append(f"""<tr>
           <td class="mono">{esc(q.get('invoice_no'))}</td>
           <td><b>{esc(q.get('customer'))}</b><div class="sub">{esc(q.get('contact_name'))}</div></td>
           <td class="num">{float(q.get('amount', 0)):,.2f}<div class="sub">{esc(q.get('currency', 'MYR'))}</div></td>
           <td class="num">{esc(q.get('days', 0))}<div class="sub">{esc(q.get('due_date'))}</div></td>
-          <td><span class="chip {bcls}">{esc(q.get('bucket', '—'))}</span></td>
+          <td>{promise_cell(q)}</td>
+          <td><span class="chip {bcls}">{esc(tone or '—')}</span>{age_sub}</td>
           <td><span class="chip {cls}">{esc(label)}</span></td>
           <td class="right">{action}</td>
         </tr>""")
+    return "".join(out)
+
+
+def orbyte_rows() -> str:
+    """
+    "How this plugs into Orbyte" 面板。
+    Domain 2 的 must-have 里有 "Orbyte fit and reuse" —— 这张表就是答案：
+    我们不重造身份、审批、审计，而是复用平台的这些原语。
+    """
+    out = []
+    for cap, how, kind in orbyte.capability_map():
+        out.append('<div class="fact"><span class="l">%s<div class="sub">%s</div></span>'
+                   '<span class="r"><span class="chip chip-gray">%s</span></span></div>'
+                   % (esc(cap), esc(how), esc(kind)))
     return "".join(out)
 
 
@@ -127,32 +172,40 @@ def audit_rows(entries: list) -> str:
 
 # ---------------------------------------------------------------- 业务动作
 def do_scan():
-    """链路第 1–3 段。返回处理条数。"""
+    """链路第 1–3 段。返回 (起草条数, 主动不联系的条数)。"""
     state = store.load_state()
     state["total_scans"] = state.get("total_scans", 0) + 1
     count = 0
+    held = 0
     for inv in state["invoices"]:
         if inv.get("status") in ("approved", "skipped"):
             continue
         days = logic.days_overdue(inv["due_date"])
         if days <= 0 or inv.get("paid"):
             continue
-        bucket, _ = logic.bucket_of(days)
+        ps = logic.promise_state(inv)
+        if ps["state"] == "open":
+            # 承诺未到期 → 故意不草拟、不打扰。这是产品的核心克制。
+            held += 1
+            continue
+        tone = logic.tone_of(days, ps)
         if inv.get("status") == "drafted" and inv.get("draft"):
             continue  # 已经起草过，不重复消耗模型调用
-        d = llm.draft_for(inv, days, bucket)
+        d = llm.draft_for(inv, days, tone, ps)
         inv["draft"] = d["text"]
         inv["draft_source"] = d["source"]
         inv["draft_model"] = d["model"]
+        inv["draft_tone"] = tone
         inv["status"] = "drafted"
         count += 1
     store.save_state(state)
     store.append_audit({
         "invoice_id": "—", "action": "SCAN",
         "actor": "system",
-        "detail": f"Scan complete — {count} drafts created, waiting for human review",
+        "detail": (f"Scan complete — {count} draft(s) waiting for human review, "
+                   f"{held} customer(s) deliberately not contacted (promise still open)"),
     })
-    return count
+    return count, held
 
 
 def decide(inv_id: str, action: str, final_text: str, actor: str):
@@ -180,6 +233,71 @@ def decide(inv_id: str, action: str, final_text: str, actor: str):
                   f"{logic.days_overdue(target['due_date'])} days overdue",
     })
     return True
+
+
+def record_promise(inv_id: str, promised_for: str, channel: str, note: str, actor: str):
+    """
+    人把客户的口头承诺记进台账 —— 这是全系统唯一新增的数据写入动作，
+    而且它必须由人来完成：系统不会替客户"答应"任何事。
+    """
+    try:
+        logic.parse_date(promised_for)
+    except (ValueError, TypeError):
+        return False, "Date must look like 2026-10-26"
+    state = store.load_state()
+    target = next((i for i in state["invoices"] if i.get("id") == inv_id), None)
+    if not target:
+        return False, "Invoice not found"
+    target.setdefault("promises", []).append({
+        "recorded_at": store.now_iso()[:10],
+        "promised_for": promised_for,
+        "channel": channel or "Phone",
+        "recorded_by": actor,
+        "note": note or "",
+        "kept": None,
+    })
+    # 有承诺在身 → 这张单退回"暂不催"，草稿作废，避免有人误点发送
+    target["status"] = "pending"
+    target["draft"] = None
+    target["draft_tone"] = None
+    target["decided_by"] = None
+    target["decided_at"] = None
+    store.save_state(state)
+    store.append_audit({
+        "invoice_id": target.get("invoice_no") or inv_id,
+        "action": "PROMISE",
+        "actor": actor,
+        "detail": (f"Promise recorded — customer undertakes to pay by {promised_for} "
+                   f"via {channel or 'Phone'}; drafting suspended until that date"),
+    })
+    return True, ""
+
+
+def promise_ledger(inv: dict):
+    """审核页右侧的承诺台账。返回 (html, 兑现率说明)。"""
+    ps_list = sorted(inv.get("promises") or [], key=lambda x: x.get("promised_for", ""))
+    if not ps_list:
+        body = ('<div class="empty" style="padding:14px 0">Nothing promised yet on this '
+                'invoice. Record one below the first time the customer gives you a date.</div>')
+    else:
+        parts = []
+        for p in ps_list:
+            kept = p.get("kept")
+            chip = ('<span class="chip chip-green">kept</span>' if kept is True
+                    else '<span class="chip chip-red">broken</span>' if kept is False
+                    else '<span class="chip chip-blue">open</span>')
+            parts.append(
+                f'<div class="fact"><span class="l">{esc(p.get("promised_for"))}'
+                f'<div class="sub">{esc(p.get("channel") or "—")} · logged '
+                f'{esc(p.get("recorded_at"))} by {esc(p.get("recorded_by") or "—")}</div>'
+                + (f'<div class="sub" style="font-style:italic">“{esc(p.get("note"))}”</div>'
+                   if p.get("note") else "")
+                + f'</span><span class="r">{chip}</span></div>')
+        body = "".join(parts)
+    rel = logic.promise_kept_rate(inv)
+    rate = (f"This customer has kept {rel['kept']} of {rel['total']} promises "
+            f"({rel['pct']}%)" if rel["total"] else "No promise history on this customer yet")
+    return body, rate
 
 
 # ---------------------------------------------------------------- HTTP
@@ -252,8 +370,18 @@ class Handler(BaseHTTPRequestHandler):
         form = urllib.parse.parse_qs(raw)
         try:
             if path == "/scan":
-                do_scan()
-                return self._redirect("/?scanned=1")
+                count, held = do_scan()
+                return self._redirect(f"/?scanned={count}&held={held}")
+            if path == "/promise":
+                inv_id = (form.get("id") or [""])[0]
+                promised_for = (form.get("promised_for") or [""])[0]
+                channel = (form.get("channel") or ["Phone"])[0]
+                note = (form.get("note") or [""])[0]
+                actor = ((form.get("actor") or ["team"])[0]).strip() or "team"
+                ok, err = record_promise(inv_id, promised_for, channel, note, actor)
+                if not ok:
+                    return self._send(render("error.html", msg=err), 400)
+                return self._redirect(f"/review/{inv_id}?promised=1")
             if path == "/decide":
                 inv_id = (form.get("id") or [""])[0]
                 action = (form.get("action") or ["approve"])[0]
@@ -274,9 +402,12 @@ class Handler(BaseHTTPRequestHandler):
         s = logic.summary(queue)
         banner = ""
         if q.get("scanned"):
-            banner = ('<div class="banner ok">Scan complete. The drafts below are written — '
-                      '<b>but not one has been sent</b>. Each one waits for you to open it, '
-                      'read it, and approve it.</div>')
+            n = (q.get("scanned") or ["0"])[0]
+            h = (q.get("held") or ["0"])[0]
+            banner = (f'<div class="banner ok">Scan complete — <b>{esc(n)} draft(s)</b> written, '
+                      f'and <b>{esc(h)} customer(s) deliberately left alone</b> because they are '
+                      f'still inside a payment date they promised. Nothing has been sent: every '
+                      f'draft waits for a person to read it and approve it.</div>')
         stats = logic.savings_estimate(s["approved_today"])
         return self._send(render(
             "index.html",
@@ -287,6 +418,11 @@ class Handler(BaseHTTPRequestHandler):
             llm_state=("Model connected" if llm.llm_configured() else "No model configured · template fallback"),
             llm_cls=("chip-green" if llm.llm_configured() else "chip-gray"),
             saved_hours=stats["hours_saved"],
+            held=s["held"],
+            held_clause=(f'{s["held"]} row above is' if s["held"] == 1
+                         else f'{s["held"]} rows above are'),
+            data_source=orbyte.source_label(),
+            orbyte_rows=orbyte_rows(),
             approved=stats["approved"],
             audit_tail=audit_rows(store.read_audit(3)),
         ))
@@ -297,17 +433,29 @@ class Handler(BaseHTTPRequestHandler):
         if not inv:
             return self._send(render("error.html", msg="Invoice not found"), 404)
         days = logic.days_overdue(inv["due_date"])
-        bucket, suggestion = logic.bucket_of(days)
+        ps = logic.promise_state(inv)
+        tone = inv.get("draft_tone") or logic.tone_of(days, ps)
+        _, suggestion = logic.bucket_of(days)
         src = inv.get("draft_source") or "template"
         src_label = "Model-generated" if src == "llm" else "Template fallback (no model configured)"
-        banner = ('<div class="banner ok">Approved and written to the audit log. In production '
-                  'the next step would be an email API call — deliberately not wired here.</div>'
-                  if q.get("done") else "")
+
+        banner = ""
+        if q.get("promised"):
+            banner += ('<div class="banner ok">Promise recorded. This invoice is now on hold — '
+                       'no message will be drafted until that date passes, and the record is in '
+                       'the audit log.</div>')
+        if q.get("done"):
+            banner += ('<div class="banner ok">Approved and written to the audit log. In production '
+                       'the next step would be an email API call — deliberately not wired here.</div>')
+        if ps["state"] == "open":
+            banner += (f'<div class="banner info"><b>Nothing to send.</b> '
+                       f'{esc(logic.hold_reason(inv))}</div>')
         decided = ""
         if inv.get("decided_at"):
             decided = (f'<div class="banner warn">Already handled by <b>{esc(inv.get("decided_by"))}</b> '
                        f'at {esc(inv.get("decided_at"))} — status <b>{esc(inv.get("status"))}</b>. '
                        f'Approving again will overwrite that decision.</div>')
+        ledger_html, rate_text = promise_ledger(inv)
         return self._send(render(
             "review.html",
             banner=banner + decided,
@@ -320,12 +468,15 @@ class Handler(BaseHTTPRequestHandler):
             currency=esc(inv.get("currency", "MYR")),
             due_date=esc(inv.get("due_date")),
             days=days,
-            bucket=esc(bucket),
-            bucket_cls=BUCKET_CHIP.get(bucket, "chip-gray"),
+            bucket=esc(tone),
+            bucket_cls=BUCKET_CHIP.get(tone, "chip-gray"),
             suggestion=esc(suggestion),
             draft=esc(inv.get("draft") or ""),
             src_label=esc(src_label),
             history=esc(inv.get("history_note") or "No collection history on file"),
+            ledger=ledger_html,
+            kept_rate=esc(rate_text),
+            promise_label=esc(ps.get("label")),
         ))
 
     def page_audit(self):
