@@ -11,6 +11,7 @@ fails loudly instead of silently shipping an over-limit answer.
 Run:  python3 submission/build_docs.py
 """
 import re
+import shutil
 import subprocess
 import sys
 from datetime import datetime, timedelta, timezone
@@ -81,7 +82,7 @@ ageing bucket calls for. Promise still open: draft nothing, hold the invoice, an
 as a real outcome. Promise broken: draft, and quote the customer's own date back at them. Two
 breaches escalate the tone and multiply queue priority.
 
-Artificial intelligence is used at exactly one point, deliberately: writing the prose. A language
+AI is used at exactly one point, deliberately: writing the prose. A language
 model receives a restricted fact set - invoice number, amount, due date, days overdue, the
 promise verbatim - and returns the body of one email. It does not choose who is chased, does not
 set the tone, and cannot send. A person opens each draft in an editable box and approves or skips
@@ -89,14 +90,14 @@ it; both outcomes are written to an append-only log with a hash chain. If no mod
 or the endpoint fails, the system falls back to a hand-written template and labels the draft
 source in the interface, so the product degrades instead of white-screening.
 
-The SDC Phase 1 workshops shaped three decisions. The GenAI API session set the model layer:
+The Phase 1 workshops shaped three decisions. The GenAI API session set the model layer:
 a system prompt with hard prohibitions, and an explicit fallback path. The database-architecture
 session shaped the audit design, because a collections trail has to be tamper-evident, not merely
 persisted. Cloud deployment is how this reaches judges as a public URL rather than a screenshot.
-The stack is the Python standard library only, because the clearest deployment lesson was that a
+The stack is the Python standard library only, because the clearest lesson was that a
 prototype dies at the dependency step far more often than at the logic step."""
 
-P32 = """Design thinking was applied as a sequence of narrowing decisions, not as a phase label.
+P32 = """Design thinking was applied as narrowing decisions, not as a phase label.
 
 Empathise: we interviewed a micro-wholesaler's owner about the last time a customer paid late.
 The detail that changed the project was not the invoice - it was that three customers had already
@@ -114,7 +115,7 @@ the intake validation, so tone and priority can be changed without a regression.
 
 Deployment strategy: zero dependencies, one process, all configuration through environment
 variables, and the rules in one file, so a second SME reuses the product by editing config rather
-than code - which is what "Orbyte fit and reuse" actually requires."""
+than code - which is what "Orbyte fit and reuse" requires."""
 
 IMPACT_ROWS = [
     (
@@ -316,13 +317,13 @@ T43 = [
      "In-editor completion and small refactors while reviewing the code"),
 ]
 
-T43_REVIEW = """Every AI-generated change was reviewed against a test suite before it was accepted: 45
+T43_REVIEW = """Every AI-generated change was reviewed against a test suite before acceptance: 45
 unittest cases cover the decision rules, intake validation and security headers, and all 45 pass on
-the submitted commit. Behaviour that a judge could question is kept in plain files the team can
-defend line by line - the ageing buckets and tone ladder in src/logic.py, the prompt in
-src/llm.py - rather than buried in generated glue. We rewrote the framework layer by hand after a
-failed deployment, and we removed an AI-suggested design in which the model chose urgency, because
-it produced different answers for identical inputs. The team owns every claim in this document."""
+the submitted commit. Anything a judge could question sits in plain files we can defend line by
+line - the ageing buckets and tone ladder in src/logic.py, the prompt in src/llm.py. We also
+rejected two AI suggestions: a Flask-based framework layer that broke deployment, and letting the
+model choose urgency, because it gave different answers for identical inputs. The team owns every
+claim here."""
 
 T51 = [
     ("Replit Core (cloud platform and deployment credits)", "Orbyte / SDC 2026 sponsor agreement (issued per participant to the team leader)",
@@ -343,13 +344,12 @@ runtime dependency, so its absence constrains the integration, not the prototype
 T61 = """No real user data is collected, stored or transmitted. The invoice book, customer names,
 emails and amounts in data/invoices.json are synthetic; emails use the reserved .example domain.
 The intake form at /upload accepts six typed fields and stores them in a local JSON file on the
-hosting instance. There is no account system, no login, no analytics and no cookies set by the
-application itself. When a model is configured, only the fact set needed to draft one email is sent
+hosting instance. There is no account system, no login, no analytics and no application cookies. When a model is configured, only the fact set needed to draft one email is sent
 to the provider - invoice number, amount in MYR, due date, days overdue and the customer's recorded
 promise, which is already synthetic; no free-text personal notes, and no API key in the browser.
-The append-only audit log stores the decision, the final draft text and a hash chain, and lives on
-the same instance. Retention: until the demo is reset (/reset or a redeploy), after which the
-runtime state is gone. Judges are asked to use the shared link only."""
+The append-only audit log stores the decision, the final draft text and a hash chain on the same
+instance. Retention: until the demo is reset (/reset or a redeploy), after which the runtime state
+is gone."""
 
 T62 = """Four limitations are known and stated rather than hidden. Hallucination: the model only
 writes prose from a closed fact set and cannot invent amounts, dates or legal threats; a human
@@ -686,10 +686,14 @@ def build_pdf(name: str, body: str, errors: list) -> None:
         encoding="utf-8",
     )
     subprocess.run(
-        [CHROME, "--headless", "--disable-gpu", "--no-pdf-header-footer",
+        [CHROME, "--headless", "--no-sandbox", "--disable-gpu", "--no-pdf-header-footer",
+         "--no-first-run", "--disable-extensions",
+         f"--user-data-dir={HERE / '.chrome-profile'}",
          "--virtual-time-budget=3000", f"--print-to-pdf={pdf_path}", html_path.as_uri()],
         check=True, capture_output=True,
     )
+    for tmp in (HERE / ".chrome-profile",):
+        shutil.rmtree(tmp, ignore_errors=True)
     print(f"  -> {pdf_path.name}  ({pdf_path.stat().st_size/1024:.0f} KB)")
 
 

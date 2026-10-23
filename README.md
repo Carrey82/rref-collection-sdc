@@ -30,8 +30,11 @@
 | Backup link (only if Replit is unavailable) | https://collectloop.app.workbuddy.host/?sharecode=H3YSSVLHAH |
 | Replit Project | https://replit.com/@Carrey7070/rref-collection-sdc |
 | RunPod Endpoint | Not used — no GPU workload in this prototype |
-| Slide Deck | `TODO` |
-| Demo Video | `TODO` |
+| Slide Deck | [`submission/SDC2026_RREFCOLLECTION_PitchDeck.pptx`](submission/SDC2026_RREFCOLLECTION_PitchDeck.pptx) — 9 slides |
+| Preliminary Proposal | [`submission/SDC2026_RREFCOLLECTION_Preliminary.pdf`](submission/SDC2026_RREFCOLLECTION_Preliminary.pdf) |
+| Tech Tools Declaration | [`submission/SDC2026_RREFCOLLECTION_TechDeclaration.pdf`](submission/SDC2026_RREFCOLLECTION_TechDeclaration.pdf) |
+| Proof of Replit Use | [`submission/SDC2026_RREFCOLLECTION_Replit_POU.pdf`](submission/SDC2026_RREFCOLLECTION_Replit_POU.pdf) |
+| Demo Video | `TODO` — 5–7 minutes, YouTube link |
 
 > The primary demo URL is the Replit deployment. The backup host exists only for the case where
 > Replit is unreachable during judging; its share code is needed **on first visit only** — opening
@@ -350,25 +353,43 @@ are illustrative on synthetic data, not a measured result).
 
 | Name | Role | GitHub |
 | --- | --- | --- |
-| `TODO` | Team Lead / Backend & hosting | [@TODO](https://github.com/TODO) |
-| `TODO` | Frontend & UX | [@TODO](https://github.com/TODO) |
-| `TODO` | Research, PRD & demo video | [@TODO](https://github.com/TODO) |
+| XIE KAIRUI | Team Lead — backend, deploy, submission | [@Carrey82](https://github.com/Carrey82) |
+| `TODO` | Frontend & UX | `TODO` |
+| `TODO` | Research, PRD & demo video | `TODO` |
 
 ---
 
-## Submission Checklist
+## Official submission deliverables
+
+Mapped one-to-one against the organiser's required materials list, so a reviewer can tick them off
+without leaving this page.
+
+| # | Required material | Where it is | Status |
+| --- | --- | --- | --- |
+| 1 | Complete and functional repository codebase | `src/` (6 modules), `templates/` (7 pages), `tests/` (45 cases, all passing) | In repo |
+| 2 | Proof of Replit utilisation | [`submission/SDC2026_RREFCOLLECTION_Replit_POU.pdf`](submission/SDC2026_RREFCOLLECTION_Replit_POU.pdf) + deployment `https://rref-collection-sdc.replit.app` + project `https://replit.com/@Carrey7070/rref-collection-sdc` | In repo |
+| 3 | Proof of RunPod utilisation *(if applicable)* | **Not applicable.** No GPU workload: no training, no fine-tuning, no self-hosted inference. `runpod/handler.py` returns `not_implemented` and says why; declared "not used" in Section 3.2 and Section 1 of the Tech Tools Declaration | Declared not used |
+| 4 | Completed submission template | [`submission/SDC2026_RREFCOLLECTION_Preliminary.pdf`](submission/SDC2026_RREFCOLLECTION_Preliminary.pdf) — all seven sections, every answer inside its word limit | In repo |
+| 5 | Completed tech tools declaration | [`submission/SDC2026_RREFCOLLECTION_TechDeclaration.pdf`](submission/SDC2026_RREFCOLLECTION_TechDeclaration.pdf) — all eight sections, AI-assisted development disclosed in 4.3 | In repo |
+| 6 | Pitch deck slides | [`submission/SDC2026_RREFCOLLECTION_PitchDeck.pptx`](submission/SDC2026_RREFCOLLECTION_PitchDeck.pptx) — 9 slides, 16:9 | In repo |
+| 7 | YouTube link for product demonstration | `TODO` — 5–7 minutes, English, recorded against the live URL | Pending |
+| 8 | Fully populated README summary | This file: problem, solution, stack, architecture, how to run, SDG mapping, responsible AI | In repo |
+| 9 | Apache License 2.0 | [`LICENSE`](LICENSE) — Apache License 2.0, unchanged text | In repo |
+
+### Before the deadline
 
 - [x] Team name, domain and SDG track filled in
-- [ ] Slide deck link added
-- [ ] Demo video link added
 - [x] Replit used, with proof of use in `submission/`
 - [x] RunPod evaluated and declared not used (no GPU workload)
-- [ ] Preliminary submission completed (`SDC2026_RREFCOLLECTION_Preliminary.pdf`)
-- [ ] Technology declaration completed (`SDC2026_RREFCOLLECTION_TechDeclaration.pdf`)
-- [ ] Submission files renamed with the team name
-- [x] "How to Run" steps verified on a clean Replit import
+- [x] Preliminary proposal completed (`SDC2026_RREFCOLLECTION_Preliminary.pdf`)
+- [x] Tech tools declaration completed (`SDC2026_RREFCOLLECTION_TechDeclaration.pdf`)
+- [x] Pitch deck committed
 - [x] No API keys or secrets committed to the repository
+- [x] "How to Run" steps verified on a clean clone as well as a clean Replit import
 - [x] `LICENSE` contains the Apache License 2.0
+- [ ] Demo video recorded and its YouTube link added above
+- [ ] Team member count and member names filled in above
+- [ ] Both PDFs regenerated after the final code change (`python3 submission/build_docs.py`)
 
 ## License
 
