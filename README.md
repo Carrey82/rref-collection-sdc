@@ -19,7 +19,8 @@
 | **SDG Track** | **SDG 8** — Decent Work and Economic Growth *(primary)* · **SDG 9** — Industry, Innovation and Infrastructure *(secondary)* |
 | **Team Leader** | XIE KAIRUI (`@Carrey82`) |
 | **University** | Xiamen University Malaysia |
-| **Number of Members** | `TODO` |
+| **Number of Members** | 4 |
+| **Team Lead Contact** | 2173083338@qq.com |
 
 ## Links
 
@@ -219,7 +220,7 @@ a rule in `logic.py` or a click by a human.
 ### Option 2 — Local
 
 ```bash
-git clone https://github.com/TODO-username/rref-collection-sdc.git
+git clone https://github.com/Carrey82/rref-collection-sdc.git
 cd rref-collection-sdc
 cp .env.example .env          # optional; fill LLM_API_KEY if you want model drafts
 python3 src/app.py            # → http://localhost:8080
@@ -353,9 +354,13 @@ are illustrative on synthetic data, not a measured result).
 
 | Name | Role | GitHub |
 | --- | --- | --- |
-| XIE KAIRUI | Team Lead — backend, deploy, submission | [@Carrey82](https://github.com/Carrey82) |
-| `TODO` | Frontend & UX | `TODO` |
-| `TODO` | Research, PRD & demo video | `TODO` |
+| XIE KAIRUI | Team Lead — backend, deployment, submission | [@Carrey82](https://github.com/Carrey82) |
+| ZHANG JINHONG | Team member — frontend & UX | — |
+| WANG ZHILIN | Team member — research & documentation | — |
+| HONG JUNHAN | Team member — testing & demo video | — |
+
+Team of four. Commits on `main` are made by the team lead, under the same account that owns the
+Replit project and the deployment.
 
 ---
 
@@ -388,7 +393,7 @@ without leaving this page.
 - [x] "How to Run" steps verified on a clean clone as well as a clean Replit import
 - [x] `LICENSE` contains the Apache License 2.0
 - [ ] Demo video recorded and its YouTube link added above
-- [ ] Team member count and member names filled in above
+- [x] Team member count and member names filled in above
 - [ ] Both PDFs regenerated after the final code change (`python3 submission/build_docs.py`)
 
 ## License

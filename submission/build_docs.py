@@ -27,9 +27,10 @@ CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 # Facts that only the team can supply. Rendered as a fill-in blank when empty,
 # and listed again on stderr at the end of the build.
 # ----------------------------------------------------------------------------
-MEMBERS = ""          # e.g. "3"
-LEADER_EMAIL = ""     # e.g. "name@student.xmu.edu.my"
+MEMBERS = "4"
+LEADER_EMAIL = "2173083338@qq.com"
 LEADER_PHONE = ""     # e.g. "+60 12-345 6789"
+TEAMMATES = ["ZHANG JINHONG", "WANG ZHILIN", "HONG JUNHAN"]
 
 TEAM = "RREF COLLECTION"
 PROJECT = "CollectLoop"
