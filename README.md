@@ -357,7 +357,7 @@ are illustrative on synthetic data, not a measured result).
 | XIE KAIRUI | Team Lead — backend, deployment, submission | [@Carrey82](https://github.com/Carrey82) |
 | ZHANG JINHONG | Team member — frontend & UX | — |
 | WANG ZHILIN | Team member — research & documentation | — |
-| HONG JUNHAN | Team member — testing & demo video | — |
+| HONG JUNHAN | Team member — testing & demo video | [@Heaaaan](https://github.com/Heaaaan) |
 
 Team of four. Commits on `main` are made by the team lead, under the same account that owns the
 Replit project and the deployment.
