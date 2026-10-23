@@ -2,7 +2,7 @@
 
 > **We chase the promise, not the invoice.**
 >
-> A small supplier does not lose money because it cannot write a stern email. It loses money
+> A small supplier loses money — but not because it cannot write a stern email. It loses money
 > because nobody remembers what the customer promised. CollectLoop keeps every verbal promise
 > on record — who said it, when, on which channel, whether it was kept — drafts the message
 > only when the promise is gone, and stays quiet while it is still good. A human approves

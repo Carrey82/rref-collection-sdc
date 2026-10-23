@@ -7,7 +7,7 @@
 
 ## 1. The one-liner (say this first, every time)
 
-> A small supplier does not lose money because it cannot write a stern email.
+> A small supplier loses money — **but not because it cannot write a stern email.**
 > It loses money because **nobody remembers what the customer promised**.
 > CollectLoop keeps that promise on record and only speaks up when the promise is gone.
 
