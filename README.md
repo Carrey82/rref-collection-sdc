@@ -26,16 +26,17 @@
 | Resource | Link |
 | --- | --- |
 | GitHub Repository | https://github.com/Carrey82/rref-collection-sdc |
-| **Live Demo (current build)** | **https://collectloop.app.workbuddy.host/?sharecode=H3YSSVLHAH** |
-| Live Demo (original deployment) | https://rref-collection-sdc.replit.app |
+| **Live Demo (Replit)** | **https://rref-collection-sdc.replit.app** |
+| Backup link (only if Replit is unavailable) | https://collectloop.app.workbuddy.host/?sharecode=H3YSSVLHAH |
 | Replit Project | https://replit.com/@Carrey7070/rref-collection-sdc |
 | RunPod Endpoint | Not used — no GPU workload in this prototype |
 | Slide Deck | `TODO` |
 | Demo Video | `TODO` |
 
-> The live demo requires the share code **on first visit only**: opening the link above sets a
-> session cookie, after which normal navigation (`/upload`, `/ai`, `/audit`, `/review/<id>`,
-> `/reset?yes=1`) works on the same domain without the parameter.
+> The primary demo URL is the Replit deployment. The backup host exists only for the case where
+> Replit is unreachable during judging; its share code is needed **on first visit only** — opening
+> the link above sets a session cookie, after which normal navigation (`/upload`, `/ai`, `/audit`,
+> `/review/<id>`, `/reset?yes=1`) works on the same domain without the parameter.
 
 ---
 
@@ -88,7 +89,7 @@ with a hash chain, so nothing can be quietly edited later.
 ### Key Features
 
 - **A promise ledger, not a chatbot** — the decision layer is deterministic and unit-tested
-  (39 tests): who to contact, when to stay silent, which tone. The model only writes prose, and
+  (45 tests): who to contact, when to stay silent, which tone. The model only writes prose, and
   the product still works with no model configured at all.
 - **"Don't chase" is a feature** — an open promise suppresses the draft entirely. Fewer
   messages sent is the point, not a side effect.
@@ -164,9 +165,10 @@ with a hash chain, so nothing can be quietly edited later.
 │   ├── invoices.json   # synthetic seed data (committed)
 │   ├── state.json      # runtime state (gitignored)
 │   └── audit_log.jsonl # audit trail (gitignored)
-├── tests/              # unittest, zero dependencies (39 tests)
+├── tests/              # unittest, zero dependencies (45 tests)
 │   ├── test_logic.py
-│   └── test_intake.py
+│   ├── test_intake.py
+│   └── test_security.py
 ├── runpod/handler.py   # placeholder — not used, see module docstring
 ├── submission/         # submission PDFs and proof-of-use screenshots
 ├── .replit             # Replit run + deployment config
