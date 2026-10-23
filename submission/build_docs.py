@@ -29,7 +29,7 @@ CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 # ----------------------------------------------------------------------------
 MEMBERS = "4"
 LEADER_EMAIL = "2173083338@qq.com"
-LEADER_PHONE = ""     # e.g. "+60 12-345 6789"
+LEADER_PHONE = "+86 13906032500"
 TEAMMATES = ["ZHANG JINHONG", "WANG ZHILIN", "HONG JUNHAN"]
 
 TEAM = "RREF COLLECTION"
