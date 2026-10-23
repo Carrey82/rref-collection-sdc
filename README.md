@@ -26,11 +26,16 @@
 | Resource | Link |
 | --- | --- |
 | GitHub Repository | https://github.com/Carrey82/rref-collection-sdc |
+| **Live Demo (current build)** | **https://collectloop.app.workbuddy.host/?sharecode=H3YSSVLHAH** |
+| Live Demo (original deployment) | https://rref-collection-sdc.replit.app |
 | Replit Project | https://replit.com/@Carrey7070/rref-collection-sdc |
-| Live Demo | https://`TODO`.replit.app |
 | RunPod Endpoint | Not used — no GPU workload in this prototype |
 | Slide Deck | `TODO` |
 | Demo Video | `TODO` |
+
+> The live demo requires the share code **on first visit only**: opening the link above sets a
+> session cookie, after which normal navigation (`/upload`, `/ai`, `/audit`, `/review/<id>`,
+> `/reset?yes=1`) works on the same domain without the parameter.
 
 ---
 
