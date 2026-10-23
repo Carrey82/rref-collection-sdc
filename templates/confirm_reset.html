@@ -7,11 +7,16 @@
 <style>{{style}}</style>
 </head>
 <body>
-<div class="topbar">
-  <div class="in"><div class="brand"><span class="dot"></span>{{app}}</div>
-  <div class="nav"><a href="/">Queue</a></div></div>
-</div>
-<div class="wrap">
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="in">
+    <a class="brand" href="/"><span class="dot" aria-hidden="true"></span>{{app}} <small>{{team}}</small></a>
+    <nav class="nav" aria-label="Main">{{nav}}</nav>
+    <a class="reset" href="/reset">Reset demo</a>
+  </div>
+</header>
+
+<main id="main" class="wrap">
   <div class="banner warn"><b>This wipes the demo state.</b><br>
     All approvals, drafts and audit entries will be deleted and the sample invoices restored.
     Use it right before recording your demo video, so the first screen is clean.</div>
@@ -19,7 +24,7 @@
     <a class="btn" href="/reset?yes=1">Yes, reset everything</a>
     <a class="btn ghost" href="/">Cancel</a>
   </div>
-</div>
+</main>
 <footer><span>{{app}} · {{team}}</span></footer>
 </body>
 </html>

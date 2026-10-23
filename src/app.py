@@ -24,6 +24,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import llm
 import logic
+import intake
 import orbyte
 import store
 
@@ -32,11 +33,56 @@ TPL_DIR = os.path.join(BASE_DIR, "templates")
 APP_NAME = "CollectLoop"
 TEAM = "RREF COLLECTION"
 
+# ---------------------------------------------------------------- 响应头
+# 导师给的判断：Mozilla Observatory 现在 D+，目标 B+。
+# 缺的就是下面这几条 —— 它们不改任何页面内容，只改浏览器怎么对待这个页面。
+#
+# CSP 说明：页面里没有任何 <script>，样式全部内联，所以脚本源可以收到 'none'
+# （default-src 'none' 兜住了 script-src）。style-src 必须允许 inline，
+# 因为 CSS 是塞在模板里的 —— 这是唯一一处妥协，且不影响脚本执行。
+SECURITY_HEADERS = {
+    "Content-Security-Policy": (
+        "default-src 'none'; "
+        "style-src 'self' 'unsafe-inline'; "
+        "img-src 'self' data:; "
+        "form-action 'self'; "
+        "frame-ancestors 'none'; "
+        "base-uri 'none'"
+    ),
+    "X-Content-Type-Options": "nosniff",
+    "X-Frame-Options": "DENY",
+    "Referrer-Policy": "no-referrer",
+    "Permissions-Policy": "geolocation=(), camera=(), microphone=(), payment=(), usb=()",
+    "Cross-Origin-Opener-Policy": "same-origin",
+    "Cross-Origin-Resource-Policy": "same-origin",
+    "X-Permitted-Cross-Domain-Policies": "none",
+    "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+}
+
+# ---------------------------------------------------------------- 导航
+# 导师的原话：「我找不到这个页面」。所以导航必须把五件事全列出来，
+# 而且用业务词命名（Work queue / Upload invoice / How the AI works / Audit log）。
+NAV = [
+    ("/", "Work queue", "queue"),
+    ("/upload", "Upload invoice", "upload"),
+    ("/ai", "How the AI works", "ai"),
+    ("/audit", "Audit log", "audit"),
+]
+
+
+def nav_html(active: str = "") -> str:
+    out = []
+    for href, label, key in NAV:
+        cur = ' aria-current="page"' if key == active else ""
+        out.append(f'<a href="{href}"{cur}>{label}</a>')
+    return "".join(out)
+
 
 # ---------------------------------------------------------------- 模板
-def render(name: str, **ctx) -> str:
+def render(name: str, nav_active: str = "", **ctx) -> str:
     with open(os.path.join(TPL_DIR, name), "r", encoding="utf-8") as f:
         tpl = f.read()
+    tpl = tpl.replace("{{nav}}", nav_html(nav_active))
     for k, v in ctx.items():
         tpl = tpl.replace("{{" + k + "}}", str(v))
     tpl = tpl.replace("{{app}}", APP_NAME).replace("{{team}}", TEAM)
@@ -273,6 +319,34 @@ def record_promise(inv_id: str, promised_for: str, channel: str, note: str, acto
     return True, ""
 
 
+def add_invoice(raw: dict, actor: str = "team"):
+    """
+    链路第 0 段：发票怎么进来。
+
+    种子数据是 7 张写死的样本；这个函数让人真的能加一张进去。
+    校验逻辑在 intake.py（纯函数、有单测），这里只负责落库和留痕。
+    """
+    state = store.load_state()
+    inv, errors = intake.clean(
+        raw,
+        taken_ids=[i.get("id") for i in state["invoices"]],
+        existing_nos=[i.get("invoice_no") for i in state["invoices"]],
+    )
+    if errors:
+        return None, errors
+    state["invoices"].append(inv)
+    store.save_state(state)
+    store.append_audit({
+        "invoice_id": inv["invoice_no"],
+        "action": "UPLOAD",
+        "actor": actor,
+        "detail": (f"Invoice added manually — {inv['customer']} | "
+                   f"{inv['amount']:,.2f} {inv['currency']} | due {inv['due_date']} | "
+                   f"no promise on record yet"),
+    })
+    return inv, []
+
+
 def promise_ledger(inv: dict):
     """审核页右侧的承诺台账。返回 (html, 兑现率说明)。"""
     ps_list = sorted(inv.get("promises") or [], key=lambda x: x.get("promised_for", ""))
@@ -303,17 +377,24 @@ def promise_ledger(inv: dict):
 # ---------------------------------------------------------------- HTTP
 class Handler(BaseHTTPRequestHandler):
     server_version = "CollectLoop/1.0"
+    sys_version = ""          # 不对外暴露 Python 版本
 
     def log_message(self, fmt, *args):
         sys.stderr.write("%s - %s\n" % (self.address_string(), fmt % args))
 
     # ---------- 工具
+    def _common_headers(self):
+        """每一条响应都带上安全头 —— 包括 404 和 500，漏洞最常藏在错误页上。"""
+        for k, v in SECURITY_HEADERS.items():
+            self.send_header(k, v)
+
     def _send(self, body: str, code: int = 200):
         raw = body.encode("utf-8")
         self.send_response(code)
         self.send_header("Content-Type", "text/html; charset=utf-8")
         self.send_header("Content-Length", str(len(raw)))
         self.send_header("Cache-Control", "no-store")
+        self._common_headers()
         self.end_headers()
         self.wfile.write(raw)
 
@@ -323,6 +404,8 @@ class Handler(BaseHTTPRequestHandler):
         self.send_response(code)
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(raw)))
+        self.send_header("Cache-Control", "no-store")
+        self._common_headers()
         self.end_headers()
         self.wfile.write(raw)
 
@@ -330,6 +413,7 @@ class Handler(BaseHTTPRequestHandler):
         self.send_response(303)
         self.send_header("Location", to)
         self.send_header("Content-Length", "0")
+        self._common_headers()
         self.end_headers()
 
     def _parse(self):
@@ -342,6 +426,10 @@ class Handler(BaseHTTPRequestHandler):
         try:
             if path == "/":
                 return self.page_index(q)
+            if path == "/upload":
+                return self.page_upload(q)
+            if path == "/ai":
+                return self.page_ai()
             if path == "/audit":
                 return self.page_audit()
             if path.startswith("/review/"):
@@ -372,6 +460,14 @@ class Handler(BaseHTTPRequestHandler):
             if path == "/scan":
                 count, held = do_scan()
                 return self._redirect(f"/?scanned={count}&held={held}")
+            if path == "/upload":
+                flat = {k: (v[0] if isinstance(v, list) and v else v)
+                        for k, v in form.items()}
+                inv, errors = add_invoice(flat,
+                                          actor=((form.get("actor") or ["team"])[0]).strip() or "team")
+                if errors:
+                    return self.page_upload({}, errors=errors, sticky=flat, code=400)
+                return self._redirect(f"/?added={urllib.parse.quote(inv['invoice_no'])}")
             if path == "/promise":
                 inv_id = (form.get("id") or [""])[0]
                 promised_for = (form.get("promised_for") or [""])[0]
@@ -404,18 +500,23 @@ class Handler(BaseHTTPRequestHandler):
         if q.get("scanned"):
             n = (q.get("scanned") or ["0"])[0]
             h = (q.get("held") or ["0"])[0]
-            banner = (f'<div class="banner ok">Scan complete — <b>{esc(n)} draft(s)</b> written, '
-                      f'and <b>{esc(h)} customer(s) deliberately left alone</b> because they are '
-                      f'still inside a payment date they promised. Nothing has been sent: every '
-                      f'draft waits for a person to read it and approve it.</div>')
+            banner = (f'<div class="banner ok" role="status">Scan complete — <b>{esc(n)} draft(s)</b> '
+                      f'written, <b>{esc(h)} customer left alone</b> because they are still inside a '
+                      f'date they promised. Nothing sent: every draft waits for a person.</div>')
+        if q.get("added"):
+            no = (q.get("added") or [""])[0]
+            banner += (f'<div class="banner info" role="status">Invoice <b>{esc(no)}</b> added to the ledger. '
+                       f'It has no promise on record yet, so the next scan will draft a first '
+                       f'message for it. <a href="/upload">Add another →</a></div>')
         stats = logic.savings_estimate(s["approved_today"])
         return self._send(render(
             "index.html",
+            nav_active="queue",
             cards=cards(s),
             rows=rows(queue),
             banner=banner,
             scans=state.get("total_scans", 0),
-            llm_state=("Model connected" if llm.llm_configured() else "No model configured · template fallback"),
+            llm_state=("Model connected" if llm.llm_configured() else "AI: template fallback · see how it works"),
             llm_cls=("chip-green" if llm.llm_configured() else "chip-gray"),
             saved_hours=stats["hours_saved"],
             held=s["held"],
@@ -437,11 +538,27 @@ class Handler(BaseHTTPRequestHandler):
         tone = inv.get("draft_tone") or logic.tone_of(days, ps)
         _, suggestion = logic.bucket_of(days)
         src = inv.get("draft_source") or "template"
-        src_label = "Model-generated" if src == "llm" else "Template fallback (no model configured)"
+        if src == "llm":
+            src_label = f'AI-written · {inv.get("draft_model") or "model"}'
+        else:
+            src_label = "Template fallback · no model key here"
+        # 导师问「AI 到底做了什么」——这一小块就是答案，且用的是这条草稿的真实来源
+        trace = (
+            f'<div class="fact"><span class="l">Decided who to chase</span>'
+            f'<span class="r">rules, not a model</span></div>'
+            f'<div class="fact"><span class="l">Wrote this text</span>'
+            f'<span class="r">{esc("a language model" if src == "llm" else "the fallback template")}</span></div>'
+            f'<div class="fact"><span class="l">Can it change a date?</span>'
+            f'<span class="r">no — dates come from the ledger</span></div>'
+            f'<div class="fact"><span class="l">Who presses send</span>'
+            f'<span class="r">a person, on this page</span></div>'
+            f'<p class="hint" style="margin-top:9px">'
+            f'<a href="/ai">See exactly what the model was given →</a></p>'
+        )
 
         banner = ""
         if q.get("promised"):
-            banner += ('<div class="banner ok">Promise recorded. This invoice is now on hold — '
+            banner += ('<div class="banner ok" role="status">Promise recorded. This invoice is now on hold — '
                        'no message will be drafted until that date passes, and the record is in '
                        'the audit log.</div>')
         if q.get("done"):
@@ -458,6 +575,7 @@ class Handler(BaseHTTPRequestHandler):
         ledger_html, rate_text = promise_ledger(inv)
         return self._send(render(
             "review.html",
+            nav_active="queue",
             banner=banner + decided,
             id=esc(inv["id"]),
             invoice_no=esc(inv.get("invoice_no")),
@@ -476,12 +594,118 @@ class Handler(BaseHTTPRequestHandler):
             history=esc(inv.get("history_note") or "No collection history on file"),
             ledger=ledger_html,
             kept_rate=esc(rate_text),
+            ai_trace=trace,
             promise_label=esc(ps.get("label")),
+        ))
+
+    def page_upload(self, q, errors=None, sticky=None, code: int = 200):
+        sticky = sticky or {}
+        err_html = ""
+        if errors:
+            items = "".join(f"<li>{esc(e)}</li>" for e in errors)
+            err_html = (f'<div class="banner warn" role="alert"><b>Nothing was saved yet.</b> '
+                        f'<ul class="errs">{items}</ul></div>')
+
+        def val(k, default=""):
+            v = sticky.get(k)
+            return esc(v if v not in (None, "") else default)
+
+        state = store.load_state()
+        mine = [i for i in state["invoices"] if i.get("uploaded")]
+        recent = "".join(
+            f'<div class="fact"><span class="l">{esc(i.get("invoice_no"))}'
+            f'<div class="sub">{esc(i.get("customer"))}</div></span>'
+            f'<span class="r">{float(i.get("amount", 0)):,.2f} {esc(i.get("currency", "MYR"))}'
+            f'<div class="sub">due {esc(i.get("due_date"))}</div></span></div>'
+            for i in mine[-4:]
+        ) or ('<div class="empty" style="padding:12px 0">Nothing uploaded this session — '
+              'the seven sample invoices are still the only ones in the ledger.</div>')
+
+        return self._send(render(
+            "upload.html",
+            nav_active="upload",
+            errors=err_html,
+            invoice_no=val("invoice_no"),
+            customer=val("customer"),
+            contact=val("contact_name"),
+            email=val("contact_email"),
+            amount=val("amount"),
+            due_date=val("due_date"),
+            currency=val("currency", "MYR"),
+            recent=recent,
+            uploaded_count=len(mine),
+        ), code)
+
+    def page_ai(self):
+        state = store.load_state()
+        invoices = state["invoices"]
+        queue = logic.build_queue(invoices)
+
+        # 真实计数：这一轮里哪些草稿是模型写的，哪些是模板兜底的
+        drafted = [i for i in invoices if i.get("draft")]
+        n_llm = sum(1 for i in drafted if (i.get("draft_source") == "llm"))
+        n_tpl = len(drafted) - n_llm
+
+        # 拿一条真实发票来展示「模型到底看到了什么」——
+        # 显示的必须是实际发出去的那段 prompt，不是另写的示意图
+        sample = next((i for i in invoices if i.get("draft")), None)
+        if sample is None:
+            sample = next((q for q in queue if q.get("days", 0) > 0), None) or \
+                     (invoices[0] if invoices else None)
+        prompt, sample_label = "(no invoice in the ledger yet)", "—"
+        if sample:
+            days = logic.days_overdue(sample["due_date"])
+            ps = logic.promise_state(sample)
+            tone = sample.get("draft_tone") or logic.tone_of(days, ps)
+            prompt = llm.build_prompt(sample, days, tone, ps)
+            sample_label = f'{sample.get("invoice_no")} · {sample.get("customer")}'
+
+        flow = [
+            ("1", "A person clicks <b>Run today's scan</b>", "human", "There is no background worker. The trigger is a button, so nothing happens unless somebody decides it should."),
+            ("2", "Read the invoice book and the promise ledger", "code", "store.py reads JSON. Every promise, its date and what the customer said are already on record."),
+            ("3", "Decide <b>who</b> to chase and in <b>what tone</b>", "rule", "logic.py — aging bucket × promises broken. Deterministic, unit-tested, the same answer every time."),
+            ("4", "Write the sentence", "ai", "llm.py — one chat completion. This is the only place a model is called, and it returns text, nothing else."),
+            ("5", "A person reads it and approves, skips, or records a promise", "human", "Nothing leaves the system on its own. Approval is a click, and it is logged with a name."),
+        ]
+        owners = {
+            "human": ("human", "chip-blue"),
+            "code": ("code", "chip-gray"),
+            "rule": ("rule", "chip-amber"),
+            "ai": ("AI", "chip-green"),
+        }
+        flow_rows = "".join(
+            f'<div class="flow-row"><span class="n">{n}</span>'
+            f'<span class="what">{what}</span>'
+            f'<span class="chip {owners[who][1]}">{owners[who][0]}</span>'
+            f'<span class="why">{esc(why)}</span></div>'
+            for n, what, who, why in flow
+        )
+        facts = "".join(
+            f'<div class="fact"><span class="l">{esc(k)}</span>'
+            f'<span class="r">{esc(v)}</span></div>'
+            for k, v in llm.FACT_FIELDS
+        )
+        rules = "".join(f"<li>{esc(r)}</li>" for r in llm.RULES)
+
+        return self._send(render(
+            "ai.html",
+            nav_active="ai",
+            flow_rows=flow_rows,
+            facts=facts,
+            rules=rules,
+            prompt_block=esc(prompt),
+            sample_label=esc(sample_label),
+            model_label=esc(llm.model_label()),
+            model_cls=("chip-green" if llm.llm_configured() else "chip-gray"),
+            n_drafted=len(drafted),
+            n_llm=n_llm,
+            n_tpl=n_tpl,
         ))
 
     def page_audit(self):
         entries = store.read_audit(200)
-        return self._send(render("audit.html", rows=audit_rows(entries), count=len(entries)))
+        return self._send(render("audit.html", nav_active="audit",
+                                 rows=audit_rows(entries), count=len(entries)))
 
 
 def main():

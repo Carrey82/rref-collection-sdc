@@ -8,17 +8,16 @@
 </head>
 <body>
 
-<div class="topbar">
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
   <div class="in">
-    <div class="brand"><span class="dot"></span>{{app}} <small>{{team}}</small></div>
-    <div class="nav">
-      <a href="/">Queue</a>
-      <a href="/audit">Audit log</a>
-    </div>
+    <a class="brand" href="/"><span class="dot" aria-hidden="true"></span>{{app}} <small>{{team}}</small></a>
+    <nav class="nav" aria-label="Main">{{nav}}</nav>
+    <a class="reset" href="/reset">Reset demo</a>
   </div>
-</div>
+</header>
 
-<div class="wrap">
+<main id="main" class="wrap">
   <div class="hero">
     <div class="txt">
       <h1>Append-only audit trail</h1>
@@ -42,7 +41,7 @@
       </p>
     </div>
   </div>
-</div>
+</main>
 
 <footer><span>{{app}} · {{team}}</span><span class="sp">Step 5 of 5 — traceability</span></footer>
 </body>

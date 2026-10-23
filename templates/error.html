@@ -7,16 +7,21 @@
 <style>{{style}}</style>
 </head>
 <body>
-<div class="topbar">
-  <div class="in"><div class="brand"><span class="dot"></span>{{app}}</div>
-  <div class="nav"><a href="/">Queue</a></div></div>
-</div>
-<div class="wrap">
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="in">
+    <a class="brand" href="/"><span class="dot" aria-hidden="true"></span>{{app}} <small>{{team}}</small></a>
+    <nav class="nav" aria-label="Main">{{nav}}</nav>
+    <a class="reset" href="/reset">Reset demo</a>
+  </div>
+</header>
+
+<main id="main" class="wrap">
   <div class="banner warn"><b>Something went wrong.</b><br>{{msg}}</div>
   <p class="lead">This page exists on purpose: during a live demo, a stack trace on screen is
     worse than a clear error. Go back to the queue and try the action again.</p>
   <a class="btn" href="/">← Back to queue</a>
-</div>
+</main>
 <footer><span>{{app}} · {{team}}</span></footer>
 </body>
 </html>

@@ -8,17 +8,16 @@
 </head>
 <body>
 
-<div class="topbar">
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
   <div class="in">
-    <div class="brand"><span class="dot"></span>{{app}} <small>{{team}}</small></div>
-    <div class="nav">
-      <a href="/">← Queue</a>
-      <a href="/audit">Audit log</a>
-    </div>
+    <a class="brand" href="/"><span class="dot" aria-hidden="true"></span>{{app}} <small>{{team}}</small></a>
+    <nav class="nav" aria-label="Main">{{nav}}</nav>
+    <a class="reset" href="/reset">Reset demo</a>
   </div>
-</div>
+</header>
 
-<div class="wrap">
+<main id="main" class="wrap">
 
   {{banner}}
 
@@ -33,7 +32,9 @@
 
   <div class="review">
 
-    <div class="panel" style="margin-bottom:0">
+    <div>
+
+    <div class="panel">
       <div class="head">
         <h2>Draft message</h2>
         <span class="chip {{bucket_cls}}">{{bucket}}</span>
@@ -52,14 +53,22 @@
           </div>
           <div class="row2">
             <button class="btn green" type="submit" name="action" value="approve">Approve &amp; log →</button>
-            <button class="btn ghost" type="submit" name="action" value="skip"
-              onclick="return confirm('Skip this customer without sending?')">Skip this one</button>
+            <button class="btn ghost" type="submit" name="action" value="skip">Skip this one</button>
           </div>
-          <p class="hint">Approving does not send email in this prototype — it records the decision
-            and the final text. Wiring an email API is a 20-line change; we kept it out so nothing
-            can be sent by accident during the demo.</p>
+          <p class="hint">Skip means no message for this customer today — the decision is still
+            logged, because "we decided not to chase" is a decision. Approving does not send email
+            in this prototype: it records the decision and the final text. Wiring an email API is a
+            20-line change; we kept it out so nothing can be sent by accident during the demo.</p>
         </form>
       </div>
+    </div>
+
+    <div class="panel">
+      <div class="head"><h2>Who wrote this text</h2>
+        <span class="chip chip-gray" style="margin-left:auto">AI in one place</span></div>
+      <div class="body" style="padding-top:8px;padding-bottom:10px">{{ai_trace}}</div>
+    </div>
+
     </div>
 
     <div>
@@ -131,7 +140,7 @@
 
   </div>
 
-</div>
+</main>
 
 <footer>
   <span>{{app}} · {{team}}</span>

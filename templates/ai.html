@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Where the AI is · {{app}}</title>
+<style>{{style}}</style>
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="in">
+    <a class="brand" href="/"><span class="dot" aria-hidden="true"></span>{{app}} <small>{{team}}</small></a>
+    <nav class="nav" aria-label="Main">{{nav}}</nav>
+    <a class="reset" href="/reset">Reset demo</a>
+  </div>
+</header>
+
+<main id="main" class="wrap">
+
+  <div class="hero">
+    <div class="txt">
+      <h1>Where the AI actually is</h1>
+      <p class="lead">Straight answer first: <b>one function, one API call, one paragraph.</b>
+        The model writes the sentence. It does not choose who gets chased, it does not know any
+        date that is not on record, and it cannot send anything. Everything else on this page
+        is the part that makes that sentence safe to send.</p>
+    </div>
+    <div class="act"><span class="chip {{model_cls}}">{{model_label}}</span></div>
+  </div>
+
+  <div class="panel">
+    <div class="head">
+      <h2>One pass through the chain</h2>
+      <span class="chip chip-green" style="margin-left:auto">1 of 5 steps is AI</span>
+    </div>
+    <div class="body">
+      <div class="flow">{{flow_rows}}</div>
+      <p class="hint">Read the badges down the right: <b>human</b>, <b>rule</b>, <b>AI</b>,
+        <b>code</b>. The AI badge appears exactly once. That is the whole claim — not that we
+        use a lot of AI, but that we put it in the one place where being wrong is cheap.</p>
+    </div>
+  </div>
+
+  <div class="review">
+
+    <div>
+      <div class="panel">
+        <div class="head">
+          <h2>What the model is given</h2>
+          <span class="chip chip-gray" style="margin-left:auto">live · {{sample_label}}</span>
+        </div>
+        <div class="body">
+          <p style="margin:0 0 12px;font-size:14.2px;color:var(--ink2)">
+            Every field below is read from the ledger or computed by <code>logic.py</code>
+            beforehand. Nothing is invented upstream, so the model has nothing to hallucinate
+            from — the worst it can do is phrase a true fact badly.</p>
+          {{facts}}
+          <p class="hint" style="margin-top:12px">This is the actual prompt built for the invoice
+            above, not an illustration:</p>
+          <pre class="prompt">{{prompt_block}}</pre>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="head"><h2>Why not let the model decide who to chase?</h2></div>
+        <div class="body">
+          <div class="fact"><span class="l">Same input, same output</span>
+            <span class="r">rules are testable</span></div>
+          <div class="fact"><span class="l">Explained to a customer in one sentence</span>
+            <span class="r">"38 days late, twice promised"</span></div>
+          <div class="fact"><span class="l">If it is wrong, who is liable?</span>
+            <span class="r">the supplier, not the model</span></div>
+          <p class="hint">There are 23 unit tests on the rule layer and none on the wording layer,
+            on purpose: the rule layer decides money, the wording layer decides politeness.</p>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="panel">
+        <div class="head"><h2>Hard limits in the system prompt</h2></div>
+        <div class="body">
+          <ul class="rules">{{rules}}</ul>
+          <p class="hint">The prompt says <b>use only the facts given</b>. The dates in a draft are
+            quoted from the promise ledger, so a draft cannot promise something the customer never
+            said.</p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="head"><h2>Three things it can never do</h2></div>
+        <div class="body">
+          <div class="never"><b>Send.</b> Approval is a click on the review page, logged with a name.</div>
+          <div class="never"><b>Pick the customer.</b> Priority is amount × √days × broken promises.</div>
+          <div class="never"><b>Invent a date.</b> Dates only enter through the promise ledger,
+            typed by a person who heard them.</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="head"><h2>Right now, on this machine</h2></div>
+        <div class="body" style="padding-top:8px;padding-bottom:8px">
+          <div class="fact"><span class="l">Model status</span>
+            <span class="r"><span class="chip {{model_cls}}">{{model_label}}</span></span></div>
+          <div class="fact"><span class="l">Drafts in this session</span>
+            <span class="r">{{n_drafted}}</span></div>
+          <div class="fact"><span class="l">Written by a model</span>
+            <span class="r">{{n_llm}}</span></div>
+          <div class="fact"><span class="l">Written by the template</span>
+            <span class="r">{{n_tpl}}</span></div>
+          <p class="hint">Both paths produce the same <b>shape</b> of message, and both quote the
+            same recorded facts. Which one ran is printed on every draft, in the badge at the top
+            of the review page.</p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="head"><h2>Turning the model on</h2></div>
+        <div class="body">
+          <p style="margin:0;font-size:14px;color:var(--ink2)">Three environment variables — any
+            OpenAI-compatible endpoint. If the call fails, times out, or returns something short,
+            the template takes over and the demo keeps working:</p>
+          <pre class="prompt">LLM_BASE_URL=https://api.openai.com/v1
+LLM_API_KEY=sk-...
+LLM_MODEL=gpt-4o-mini</pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <span>{{app}} · {{team}}</span>
+  <span>AI in one place, on purpose</span>
+  <span class="sp">Human-in-the-loop by design</span>
+</footer>
+</body>
+</html>

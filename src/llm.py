@@ -95,6 +95,32 @@ SYSTEM_PROMPT = (
     "plain text only."
 )
 
+# 给 /ai 页面用：把上面那段系统提示拆成人能读的条目。
+# 这不是另写一份文案，而是同一份约束的展示形式——两处必须一致。
+RULES = [
+    "Under 130 words.",
+    "Use ONLY the facts supplied in the prompt — never invent a payment detail.",
+    "Never invent a discount, a penalty, or a legal threat.",
+    "If a promised payment date is on record, name it explicitly.",
+    "Do not accept another vague answer to a broken promise.",
+    "One clear ask at the end.",
+    "Sign with the company name; plain text; no subject line.",
+]
+
+# 模型能碰的输入字段。顺序就是 prompt 里的顺序，方便对着屏幕讲。
+FACT_FIELDS = [
+    ("Invoice number", "from the ledger"),
+    ("Customer name", "from the ledger"),
+    ("Amount due and currency", "from the ledger"),
+    ("Due date", "from the ledger"),
+    ("Days overdue", "computed by logic.py"),
+    ("Aging bucket and required tone", "computed by logic.py"),
+    ("Broken promise date, channel, what they said", "from the promise ledger"),
+    ("Customer's promise-keeping record", "from the relationship history"),
+    ("Contact name", "from the ledger"),
+    ("Our company name", "from the ledger"),
+]
+
 
 def _call_llm(prompt: str) -> str:
     base = os.environ.get("LLM_BASE_URL", "https://api.openai.com/v1").rstrip("/")
@@ -125,12 +151,12 @@ def _call_llm(prompt: str) -> str:
         return ""
 
 
-def draft_for(inv: dict, days: int, bucket: str, promise: dict = None) -> dict:
+def build_prompt(inv: dict, days: int, bucket: str, promise: dict = None) -> str:
     """
-    返回 {text, source, model}
-      source = "llm"      → 模型写的
-      source = "template" → 兜底模板
-    这个 source 字段会原样显示在审核页面上，让评审看到系统在哪一步用了 AI。
+    组装真正发给人模型的那段用户提示。
+
+    /ai 页面直接调用这个函数来展示「模型看到了什么」——
+    页面上显示的和实际发出去的必须是同一份，否则那就是演示造假。
     """
     contact = inv.get("contact_name", "there")
     rel = inv.get("relationship") or {}
@@ -145,10 +171,10 @@ def draft_for(inv: dict, days: int, bucket: str, promise: dict = None) -> dict:
             f"/{rel.get('promises_total', 0)} kept\n"
             f"Instruction: refer to that missed date explicitly and refuse another vague answer.\n"
         )
-    prompt = (
+    return (
         f"Invoice: {inv.get('invoice_no')}\n"
         f"Customer: {inv.get('customer')}\n"
-        f"Amount due: {inv.get('amount'):,.2f} {inv.get('currency', 'MYR')}\n"
+        f"Amount due: {float(inv.get('amount') or 0):,.2f} {inv.get('currency', 'MYR')}\n"
         f"Due date: {inv.get('due_date')}\n"
         f"Days overdue: {days}\n"
         f"Aging bucket: {bucket}\n"
@@ -158,6 +184,17 @@ def draft_for(inv: dict, days: int, bucket: str, promise: dict = None) -> dict:
         f"Our company: {inv.get('company')}\n\n"
         f"Write the reminder email body."
     )
+
+
+def draft_for(inv: dict, days: int, bucket: str, promise: dict = None) -> dict:
+    """
+    返回 {text, source, model}
+      source = "llm"      → 模型写的
+      source = "template" → 兜底模板
+    这个 source 字段会原样显示在审核页面上，让评审看到系统在哪一步用了 AI。
+    """
+    contact = inv.get("contact_name", "there")
+    prompt = build_prompt(inv, days, bucket, promise)
     try:
         text = _call_llm(prompt)
     except Exception:
@@ -166,6 +203,13 @@ def draft_for(inv: dict, days: int, bucket: str, promise: dict = None) -> dict:
         return {"text": text, "source": "llm", "model": os.environ.get("LLM_MODEL", "")}
     return {"text": _template_draft(inv, days, bucket, contact, promise),
             "source": "template", "model": ""}
+
+
+def model_label() -> str:
+    """给界面用的一句话：当前到底有没有模型在线。"""
+    if not llm_configured():
+        return "no model key on this machine — template fallback"
+    return os.environ.get("LLM_MODEL") or "gpt-4o-mini"
 
 
 def llm_configured() -> bool:
