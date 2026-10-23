@@ -44,7 +44,7 @@ Rehearse this exactly. Total ≈ 2:40, leaving 20 s of slack.
 |---|---|---|
 | 0:00–0:20 | Home page | "This is the queue of overdue money for a synthetic supplier. Five invoices, 51,350 ringgit. But look at the column in the middle — that is the product." |
 | 0:20–0:40 | Point at **Promise** column | "Two customers promised a date and are inside it. Two broke a date they chose. Two never promised anything. Those are three completely different conversations." |
-| 0:40–1:00 | Click **Why?** on Tan Hardware | "Twelve thousand ringgit, three days overdue — normally the first chase. But he promised the 26th and there are four days left. The system says: **nothing to send**. Chasing now buys nothing and costs goodwill." |
+| 0:40–1:00 | Click **Why?** on Tan Hardware | "Twelve thousand ringgit, four days overdue — normally the first chase. But he promised the 26th and there are three days left. The system says: **nothing to send**. Chasing now buys nothing and costs goodwill." |
 | 1:00–1:30 | Back, open **Sunrise Packaging** | "Twenty-eight thousand, thirty-seven days, and two dates he chose and missed. Read the draft — it quotes 18 October back at him and refuses another vague answer. That sentence is not the model being clever; it is the ledger." |
 | 1:30–1:50 | Scroll the right panel | "This is the ledger: two entries, both broken, with the verbatim note, who logged it and when. A 0-of-2 promise record is why the tone escalated." |
 | 1:50–2:10 | Record a promise on Greenleaf | "Now the human part. He calls and says payday is the 30th. I type three fields and save. The invoice is now on hold — the draft is discarded, because from here the right action is to wait." |
