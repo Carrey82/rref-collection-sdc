@@ -245,7 +245,21 @@ first frame is clean.
 - **Note on account ownership.** Per the official rules, Replit Core is issued per
   participant. In this team only the leader's account holds the credit, and the project,
   deployment and proof of use all sit on that one account, named after the team.
-  Proof of use: `submission/SDC2026_RREFCOLLECTION_Replit_POU.pdf`.
+- **Proof under Handbook §10.6.** §10.6 accepts *any one* of the following, provided it shows
+  the team's own account and project: (a) a live deployment Replit URL, (b) a Replit project
+  link exposing the project history, or (c) finished Replit credit. We supply (a) and (b):
+
+  | Proof | Value |
+  | --- | --- |
+  | (a) Live deployment URL | https://rref-collection-sdc.replit.app |
+  | (b) Replit project link | https://replit.com/@Carrey7070/rref-collection-sdc |
+
+  Either one alone satisfies §10.6. The URL in (a) answers HTTP 200 without a login, so it is
+  the check that cannot fail on access rights. This repository also carries
+  `submission/SDC2026_RREFCOLLECTION_Replit_POU.pdf`, which assembles the supporting evidence
+  (deployment screenshot with response headers, the committed `.replit`, commit timestamps).
+  That PDF is supplementary: §10.6 asks for the link *in the declaration*, and the declaration
+  is where the two rows above belong.
 
 ## How We Use RunPod *(required)*
 
