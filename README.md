@@ -83,7 +83,7 @@ with a hash chain, so nothing can be quietly edited later.
 ### Key Features
 
 - **A promise ledger, not a chatbot** — the decision layer is deterministic and unit-tested
-  (23 tests): who to contact, when to stay silent, which tone. The model only writes prose, and
+  (39 tests): who to contact, when to stay silent, which tone. The model only writes prose, and
   the product still works with no model configured at all.
 - **"Don't chase" is a feature** — an open promise suppresses the draft entirely. Fewer
   messages sent is the point, not a side effect.
@@ -101,6 +101,17 @@ with a hash chain, so nothing can be quietly edited later.
   previous entry's hash.
 - **Skipping is a first-class action** — "don't chase this customer" is recorded with the
   same weight as "chase them".
+- **Manual invoice intake** — `/upload` takes the six fields a small supplier would type
+  (validation in `src/intake.py`, 16 tests). OCR or a QR scan would fill the same six fields;
+  the ledger they feed is the part nobody else has.
+- **The AI is one page, not a claim** — `/ai` shows the five-step chain with exactly one AI
+  badge, the real prompt built for a live invoice, the system-prompt rules, and the three
+  things the model can never do. Prompt construction lives in `llm.build_prompt()` so the page
+  cannot drift from what is actually sent.
+- **Hardened headers + WCAG pass** — CSP with no script sources at all, `nosniff`,
+  `frame-ancestors 'none'`, COOP/CORP, Referrer-Policy and Permissions-Policy on every
+  response including errors; skip link, visible focus rings, `scope`/`aria-current`/`aria-live`,
+  15.2px base type.
 
 ### Tech Stack
 
@@ -138,15 +149,19 @@ with a hash chain, so nothing can be quietly edited later.
 ├── src/
 │   ├── app.py          # HTTP entry: routing, pages, 5-stage chain wiring
 │   ├── logic.py        # ageing buckets, priority score, summary (pure, unit-tested)
-│   ├── llm.py          # draft generation + deterministic fallback
+│   ├── llm.py          # draft generation + deterministic fallback + prompt builder
+│   ├── intake.py       # uploaded-invoice validation (pure, unit-tested)
+│   ├── orbyte.py       # Orbyte export adapter (replay | live)
 │   └── store.py        # JSON state + append-only audit log with hash chain
-├── templates/          # server-rendered pages (index, review, audit, error, reset)
+├── templates/          # index, review, upload, ai, audit, error, reset
 ├── static/style.css    # single stylesheet, no build step
 ├── data/
 │   ├── invoices.json   # synthetic seed data (committed)
 │   ├── state.json      # runtime state (gitignored)
 │   └── audit_log.jsonl # audit trail (gitignored)
-├── tests/test_logic.py # unittest, zero dependencies
+├── tests/              # unittest, zero dependencies (39 tests)
+│   ├── test_logic.py
+│   └── test_intake.py
 ├── runpod/handler.py   # placeholder — not used, see module docstring
 ├── submission/         # submission PDFs and proof-of-use screenshots
 ├── .replit             # Replit run + deployment config
