@@ -31,6 +31,7 @@
 | Backup link (only if Replit is unavailable) | https://collectloop.app.workbuddy.host/?sharecode=H3YSSVLHAH |
 | Replit Project | https://replit.com/@Carrey7070/rref-collection-sdc |
 | RunPod Endpoint | Not used — no GPU workload in this prototype |
+| Security headers | **Mozilla Observatory A+** (score 125), verified 24 Oct 2026 on the live URL |
 | Slide Deck | [`submission/SDC2026_RREFCOLLECTION_PitchDeck.pptx`](submission/SDC2026_RREFCOLLECTION_PitchDeck.pptx) — 9 slides |
 | Preliminary Proposal | [`submission/SDC2026_RREFCOLLECTION_Preliminary.pdf`](submission/SDC2026_RREFCOLLECTION_Preliminary.pdf) |
 | Tech Tools Declaration | [`submission/SDC2026_RREFCOLLECTION_TechDeclaration.pdf`](submission/SDC2026_RREFCOLLECTION_TechDeclaration.pdf) |
