@@ -8,6 +8,7 @@
 | `SDC2026_RREFCOLLECTION_Replit_POU.pdf` | Replit 使用证明（Handbook §10.6 的 (a)+(b)） | `python3 submission/pou/build_pou.py` |
 | `build_docs.py` | 生成上面两份 PDF 的脚本，**正文都写在这里** | — |
 | `pou/` | POU 截图与生成脚本 | — |
+| **Demo video** | 6 分 48 秒英文演示，YouTube Unlisted：[https://youtu.be/351MYV8VjE8](https://youtu.be/351MYV8VjE8) | 录屏后剪掉停顿、标准化音量后上传 |
 
 ## 两份 PDF 的唯一正确改法
 
