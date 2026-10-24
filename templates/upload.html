@@ -37,56 +37,74 @@
       <div class="head"><h2>Invoice details</h2>
         <span class="chip chip-blue" style="margin-left:auto">goes into the queue</span></div>
       <div class="body">
-        <form method="post" action="/upload" novalidate>
-          <div class="ugrid">
-            <div class="field">
-              <label for="f-no">Invoice number <span class="req">required</span></label>
-              <input id="f-no" name="invoice_no" value="{{invoice_no}}" placeholder="INV-2026-0501"
-                     maxlength="24" required aria-describedby="h-no">
-              <p class="hint" id="h-no">Letters, digits and - / _ . only. Must not already exist.</p>
-            </div>
-            <div class="field">
-              <label for="f-due">Due date <span class="req">required</span></label>
-              <input id="f-due" name="due_date" type="date" value="{{due_date}}" required
-                     aria-describedby="h-due">
-              <p class="hint" id="h-due">A past date will be chased on the next scan.</p>
-            </div>
-            <div class="field">
-              <label for="f-cust">Customer <span class="req">required</span></label>
-              <input id="f-cust" name="customer" value="{{customer}}" maxlength="80"
-                     placeholder="Syarikat Jaya Sdn Bhd" required>
-            </div>
-            <div class="field">
-              <label for="f-amt">Amount <span class="req">required</span></label>
-              <div class="inline2">
-                <input id="f-amt" name="amount" value="{{amount}}" placeholder="12500.00"
-                       inputmode="decimal" required aria-describedby="h-amt">
-                <select name="currency" aria-label="Currency">
-                  <option value="MYR">MYR</option>
-                  <option value="SGD">SGD</option>
-                  <option value="USD">USD</option>
-                </select>
-              </div>
-              <p class="hint" id="h-amt">Commas are fine — 12,500.00 works.</p>
-            </div>
-            <div class="field">
-              <label for="f-cn">Contact person</label>
-              <input id="f-cn" name="contact_name" value="{{contact}}" maxlength="80"
-                     placeholder="Ms. Lim Hui Ying">
-            </div>
-            <div class="field">
-              <label for="f-em">Contact email</label>
-              <input id="f-em" name="contact_email" type="email" value="{{email}}"
-                     placeholder="accounts@example.com">
-            </div>
+        <form method="post" action="/upload" class="upload-form" aria-describedby="upload-form-help">
+          <div class="form-intro" id="upload-form-help">
+            <p><strong>Fields marked <span class="required-mark" aria-hidden="true">*</span> are required.</strong>
+              You’ll need the invoice number, due date, customer name and amount.</p>
+            <p>Contact details and “Added by” are optional. This form records the invoice; it does not send an email.</p>
           </div>
 
-          <div class="field" style="max-width:300px">
-            <label for="f-actor">Added by</label>
-            <input id="f-actor" name="actor" value="RREF COLLECTION" maxlength="60"
-                   aria-describedby="h-actor">
-            <p class="hint" id="h-actor">Written into the audit log with the record.</p>
-          </div>
+          <section class="form-section" aria-labelledby="invoice-fields-title">
+            <h3 class="form-section-title" id="invoice-fields-title">Invoice details</h3>
+            <div class="ugrid">
+              <div class="field">
+                <label for="f-no">Invoice number <span class="req"><span aria-hidden="true">*</span> required</span></label>
+                <input id="f-no" name="invoice_no" value="{{invoice_no}}" placeholder="INV-2026-0501"
+                       maxlength="24" required aria-describedby="h-no">
+                <p class="hint" id="h-no">Letters, digits and - / _ . only. Must not already exist.</p>
+              </div>
+              <div class="field">
+                <label for="f-due">Due date <span class="req"><span aria-hidden="true">*</span> required</span></label>
+                <input id="f-due" name="due_date" type="date" value="{{due_date}}" required
+                       aria-describedby="h-due">
+                <p class="hint" id="h-due">A past date will be included in the next scan.</p>
+              </div>
+              <div class="field">
+                <label for="f-cust">Customer <span class="req"><span aria-hidden="true">*</span> required</span></label>
+                <input id="f-cust" name="customer" value="{{customer}}" maxlength="80"
+                       placeholder="Syarikat Jaya Sdn Bhd" autocomplete="organization" required
+                       aria-describedby="h-cust">
+                <p class="hint" id="h-cust">Use the customer name shown on the invoice.</p>
+              </div>
+              <div class="field">
+                <label for="f-amt">Amount <span class="req"><span aria-hidden="true">*</span> required</span></label>
+                <div class="inline2">
+                  <input id="f-amt" name="amount" value="{{amount}}" placeholder="12500.00"
+                         inputmode="decimal" required aria-describedby="h-amt">
+                  <select id="f-currency" name="currency" aria-label="Currency">
+                    <option value="MYR">MYR</option>
+                    <option value="SGD">SGD</option>
+                    <option value="USD">USD</option>
+                  </select>
+                </div>
+                <p class="hint" id="h-amt">Commas are fine — 12,500.00 works.</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="form-section form-section-optional" aria-labelledby="contact-fields-title">
+            <h3 class="form-section-title" id="contact-fields-title">Contact details <span class="section-meta">Optional</span></h3>
+            <div class="ugrid">
+              <div class="field">
+                <label for="f-cn">Contact person <span class="optional-label">optional</span></label>
+                <input id="f-cn" name="contact_name" value="{{contact}}" maxlength="80"
+                       placeholder="Ms. Lim Hui Ying" autocomplete="name">
+              </div>
+              <div class="field">
+                <label for="f-em">Contact email <span class="optional-label">optional</span></label>
+                <input id="f-em" name="contact_email" type="email" value="{{email}}"
+                       placeholder="accounts@example.com" autocomplete="email" aria-describedby="h-em">
+                <p class="hint" id="h-em">Saved with the invoice only; no email is sent.</p>
+              </div>
+            </div>
+
+            <div class="field upload-actor">
+              <label for="f-actor">Added by <span class="optional-label">optional</span></label>
+              <input id="f-actor" name="actor" value="RREF COLLECTION" maxlength="60"
+                     aria-describedby="h-actor">
+              <p class="hint" id="h-actor">This name is written into the audit log with the record.</p>
+            </div>
+          </section>
 
           <div class="row2">
             <button class="btn" type="submit">Add to ledger →</button>

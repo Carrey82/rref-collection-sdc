@@ -148,13 +148,54 @@ textarea:focus{border-color:#a5b4fc;box-shadow:0 0 0 3px rgba(59,91,219,.12)}
 .row2{display:flex;gap:9px;margin-top:14px;flex-wrap:wrap}
 .row3{display:grid;grid-template-columns:1fr;gap:8px}
 .hint{font-size:13.2px;color:var(--ink3);margin-top:9px;line-height:1.62}
-.req{font-weight:600;color:var(--ink3);font-size:11.4px;letter-spacing:.05em;text-transform:uppercase}
+.req{display:inline-flex;align-items:center;gap:3px;font-weight:700;color:#991b1b;font-size:11.2px;
+  letter-spacing:.035em;text-transform:uppercase;background:var(--red-soft);border-radius:999px;
+  padding:2px 7px;margin-left:4px}
 
 /* 上传页 */
 .ugrid{display:grid;grid-template-columns:1fr 1fr;gap:0 20px}
 @media(max-width:640px){.ugrid{grid-template-columns:1fr}}
 .inline2{display:grid;grid-template-columns:1fr 92px;gap:9px}
+.form-intro{margin:0 0 18px;padding:12px 14px;background:var(--accent-soft);border:1px solid #c7d2fe;
+  border-radius:10px;color:var(--ink2);font-size:13.8px;line-height:1.58}
+.form-intro p{margin:0}
+.form-intro p+p{margin-top:5px}
+.required-mark{color:var(--red);font-size:17px;font-weight:800;line-height:1}
+.form-section{margin-top:20px}
+.form-section+.form-section{border-top:1px solid var(--line);padding-top:18px;margin-top:4px}
+.form-section-title{display:flex;align-items:center;gap:9px;margin:0 0 13px;color:var(--ink);
+  font-size:14px;font-weight:750}
+.section-meta,.optional-label{font-size:11.2px;font-weight:600;letter-spacing:.03em;
+  color:var(--ink3);text-transform:uppercase}
+.section-meta{margin-left:auto}
+.optional-label{margin-left:4px}
+.upload-actor{max-width:420px}
+.upload-form .row2 .btn{min-height:44px}
+.banner.warn b,.banner.warn strong{color:#7c2d12}
+.banner.warn .errs{display:grid;gap:3px}
+.banner.warn .errs li::marker{color:var(--red)}
 .steps-plain{margin:0;padding-left:22px;font-size:14.2px;color:var(--ink2);display:grid;gap:10px}
+
+/* 错误页：先展示可读的错误信息，再给出明确退路 */
+.error-page{max-width:900px}
+.error-state{display:grid;grid-template-columns:48px minmax(0,1fr);gap:18px;align-items:start;
+  background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:26px}
+.error-mark{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;
+  background:var(--red-soft);color:var(--red);font-size:23px;font-weight:800}
+.error-content{min-width:0}
+.error-eyebrow{margin:0 0 5px;color:var(--red);font-size:11.8px;font-weight:750;
+  letter-spacing:.08em;text-transform:uppercase}
+.error-content h1{margin:0 0 14px}
+.error-message{margin:0 0 16px;overflow-wrap:anywhere;white-space:pre-wrap}
+.error-state .lead{max-width:66ch;margin-bottom:18px}
+.error-actions{display:flex;gap:10px;flex-wrap:wrap}
+@media(max-width:520px){
+  .error-state{grid-template-columns:1fr;gap:12px;padding:20px}
+  .error-actions{display:grid;grid-template-columns:1fr}
+  .error-actions .btn{justify-content:center}
+  .upload-form .row2{display:grid;grid-template-columns:1fr}
+  .upload-form .row2 .btn{justify-content:center}
+}
 
 /* AI 页 */
 .flow-row{display:grid;grid-template-columns:30px 1fr max-content;gap:5px 12px;
