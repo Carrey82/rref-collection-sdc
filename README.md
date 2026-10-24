@@ -35,7 +35,7 @@
 | Preliminary Proposal | [`submission/SDC2026_RREFCOLLECTION_Preliminary.pdf`](submission/SDC2026_RREFCOLLECTION_Preliminary.pdf) |
 | Tech Tools Declaration | [`submission/SDC2026_RREFCOLLECTION_TechDeclaration.pdf`](submission/SDC2026_RREFCOLLECTION_TechDeclaration.pdf) |
 | Proof of Replit Use | [`submission/SDC2026_RREFCOLLECTION_Replit_POU.pdf`](submission/SDC2026_RREFCOLLECTION_Replit_POU.pdf) |
-| Demo Video | `TODO` — 5–7 minutes, YouTube link |
+| Demo Video | [https://youtu.be/351MYV8VjE8](https://youtu.be/351MYV8VjE8) — 6 min 48 s, English |
 
 > The primary demo URL is the Replit deployment. The backup host exists only for the case where
 > Replit is unreachable during judging; its share code is needed **on first visit only** — opening
@@ -377,7 +377,7 @@ without leaving this page.
 | 4 | Completed submission template | [`submission/SDC2026_RREFCOLLECTION_Preliminary.pdf`](submission/SDC2026_RREFCOLLECTION_Preliminary.pdf) — all seven sections, every answer inside its word limit | In repo |
 | 5 | Completed tech tools declaration | [`submission/SDC2026_RREFCOLLECTION_TechDeclaration.pdf`](submission/SDC2026_RREFCOLLECTION_TechDeclaration.pdf) — all eight sections, AI-assisted development disclosed in 4.3 | In repo |
 | 6 | Pitch deck slides | [`submission/SDC2026_RREFCOLLECTION_PitchDeck.pptx`](submission/SDC2026_RREFCOLLECTION_PitchDeck.pptx) — 9 slides, 16:9 | In repo |
-| 7 | YouTube link for product demonstration | `TODO` — 5–7 minutes, English, recorded against the live URL | Pending |
+| 7 | YouTube link for product demonstration | [https://youtu.be/351MYV8VjE8](https://youtu.be/351MYV8VjE8) — 6:48, English, recorded against the live URL | Done |
 | 8 | Fully populated README summary | This file: problem, solution, stack, architecture, how to run, SDG mapping, responsible AI | In repo |
 | 9 | Apache License 2.0 | [`LICENSE`](LICENSE) — Apache License 2.0, unchanged text | In repo |
 
@@ -392,7 +392,7 @@ without leaving this page.
 - [x] No API keys or secrets committed to the repository
 - [x] "How to Run" steps verified on a clean clone as well as a clean Replit import
 - [x] `LICENSE` contains the Apache License 2.0
-- [ ] Demo video recorded and its YouTube link added above
+- [x] Demo video recorded and its YouTube link added above
 - [x] Team member count and member names filled in above
 - [ ] Both PDFs regenerated after the final code change (`python3 submission/build_docs.py`)
 
