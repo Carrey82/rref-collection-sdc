@@ -3,6 +3,11 @@
 Mentor's wording, 2026-10-23: *"I want you to research how to create a pitch deck using the
 format of executive summary… because clarity of proposal carries 20% of your mark."*
 
+**Editing scope:** research and documentation only. This revision changes the proposal
+narrative and evidence wording; it does not change the application, live-demo section,
+PPTX, submission PDFs, or another member's implementation. Research notes and the
+claim-verification checklist are in `wang-zhilin-research.md`.
+
 An executive summary is not "short slides". It is **a deck where slide 1 alone would still let
 a judge score you** — situation, complication, resolution, proof, ask. Every slide after it
 exists only to defend one line of slide 1.
@@ -14,39 +19,58 @@ exists only to defend one line of slide 1.
 
 ## Slide 1 — Executive summary (the only slide that must work alone)
 
-**Title:** A small supplier loses money because nobody remembers what the customer promised.
+**Title:** Make the payment promise part of the next follow-up decision.
 
-Five lines, in this order. Every one maps to a Domain 2 must-have:
+**On-slide copy — keep these five lines short:**
 
-| Line | Text on the slide | Must-have it proves |
+- **User:** small suppliers managing overdue customer invoices.
+- **Problem:** a due date alone does not explain whether to wait or follow up.
+- **Solution:** record the promise, hold or draft by rule, then ask a person to review.
+- **Prototype:** manual entry → promise-aware decision → model/template draft → logged review.
+- **Next evidence:** compare preparation time and factual accuracy with existing practice.
+
+**Visible status line:** Synthetic-data prototype · approval logs only · impact not yet measured.
+
+**Presenter notes — evidence mapping, not additional slide text:**
+
+| Line | Supporting explanation | Requirement addressed |
 |---|---|---|
-| Situation | Malaysian SMEs chase overdue invoices by memory — about 12 minutes per reminder, and the record dies with the owner's phone. | One clear problem |
-| Complication | It is already automated at the invoice level. It fails at the **promise** level: "payday is the 30th" is said on a phone call and never written down, so the next reminder apologises instead of quoting them. | Problem–solution fit |
-| Resolution | CollectLoop keeps a promise ledger. It drafts a message **only when the promise is gone**, and stays silent while it still holds. | Automated chain + human control |
-| Proof | One click → five stages → one draft per broken promise, zero per open one. Four screenshots on the next slide. | Feasibility |
-| Business | Sold as a module inside Orbyte, priced by invoice volume. Seven fewer days in the collection cycle is cash already earned. SDG 8. | Orbyte fit + SDG |
+| Situation | A small supplier needs to follow up overdue invoices, but payment promises may remain in calls or messages rather than the collection record. This is our target-user hypothesis, not a measured market statistic. | One clear problem |
+| Complication | A reminder based only on the due date can overlook an open payment promise or fail to distinguish a broken one. | Problem–solution fit |
+| Resolution | CollectLoop records promises, holds invoices with open promises, and prepares drafts for eligible overdue invoices without an open promise. A person reviews every draft. | Automated chain + human control |
+| Proof | The prototype contains a manual-entry form, promise-aware rules, model-or-template drafting, review actions and a local audit log. The demonstration uses synthetic data and sends no messages. | Feasibility |
+| Business | Proposed as an Orbyte-compatible module. Reduced preparation time and earlier collections are hypotheses to test in a pilot, not proven results. | Orbyte fit + SDG |
 
-**Speaker line (20s):** "We chase the promise, not the invoice. Everything after this slide is
-evidence for that sentence."
+**Speaker line (about 20s; rehearse):** "CollectLoop helps small suppliers follow up overdue
+invoices using the customer's payment promise, not just the due date. Rules decide whether
+to wait or draft; AI or a template prepares the wording; a person reviews it. This prototype
+logs decisions without sending messages."
 
 ---
 
 ## Slide 2 — The gap is between the call and the letter
 
-**Title:** The promise already exists. It just never reaches the system that needs it.
+**Title:** The same overdue invoice can need three different responses.
 
-Three-column layout, left to right:
+**Illustrative scenario — not a customer case study:** an unpaid invoice is overdue.
+The promise state changes the appropriate next step:
 
-1. **Customer says** — "Cheque's being prepared, will bank in by Monday." (WhatsApp, Tuesday)
-2. **Nobody writes it down** — the owner remembers for four days, then forgets which Monday.
-3. **The system sends** — a generic "invoice 0361 is 38 days overdue" — and the customer reads
-   it as *you weren't listening*.
+| Recorded context | Rule-based response | Why it matters |
+|---|---|---|
+| No payment promise recorded | Prepare a reminder for review | Ask for a clear next step |
+| Promise date has not passed | Hold new drafting | Avoid following up before the promised date |
+| Promise date has passed | Prepare a reminder using the missed commitment | Give the reviewer the relevant history |
 
-**The cost is not the letter.** It is that a badly timed chase spends goodwill you cannot buy
-back, and quiet customers pay last.
+**Research question:** do suppliers lose this context often enough that recording it
+reduces unnecessary follow-up work?
 
-**Speaker line (25s):** "Every tool in this market automates the letter. The letter was never
-the problem."
+**Research hypothesis:** poorly timed reminders may create avoidable follow-up work and
+strain customer relationships. The three-column example is fictional, not a customer
+interview or proof that competitors lack promise tracking.
+
+**Speaker line (25s):** "Our focus is the gap between a payment promise and the next reminder.
+We record the commitment so the follow-up decision can use it. We still need customer
+interviews to establish how often this problem occurs."
 
 ---
 
@@ -75,57 +99,96 @@ Then the two numbers that prove the rule layer matters:
 
 ## Slide 4 — Where the AI is (answer the question the mentor asked)
 
-**Title:** The model writes one paragraph. The rules decide money.
+**Title:** Rules choose whether to draft. AI helps write it. People check it.
 
-Three statements, then one screenshot of the `/ai` page:
+**On-slide copy:**
 
-- **Input:** ten fields, all read from the ledger or computed by `logic.py`. No free text from
-  the internet, so there is nothing to hallucinate from.
-- **Constraint:** the system prompt forbids inventing a payment detail, a discount, or a threat;
-  it must name a broken promise date if one is on record.
-- **Boundary:** it cannot choose the customer, cannot change a date, cannot send. Verified by
-  the fact that the product still runs with **no model key at all** — it falls back to a
-  template and the demo continues.
+| Rules | Model or template | Person |
+|---|---|---|
+| Select eligible invoices and tone | Prepare reminder wording from recorded context | Check facts, edit, approve or skip |
 
-**Why not let the model decide?** Determinism (23→39 unit tests on the rule layer), one-sentence
-explainability to a customer, and liability: if the tone is wrong, the supplier answers for it.
+**Visible status line:** Model output is not guaranteed accurate. Approval does not send.
 
-**Speaker line (30s):** "We didn't use a lot of AI. We used it in the one place where being
-wrong is cheap."
+**Presenter notes:**
+
+- **Input:** invoice and customer details, dates, calculated overdue status, rule-selected tone
+  and recorded promise context. These are supplied to the model as drafting context.
+- **Output and value:** a reminder paragraph tailored to that context. The intended benefit
+  is less manual composition, not a new prediction of credit risk or payment behaviour.
+- **Boundary:** rules select eligible invoices and tone; the model does not update the ledger
+  or send messages. Prompt instructions ask it not to invent facts, but cannot guarantee
+  accuracy. A reviewer must check amounts, names, dates and unsupported statements.
+- **Fallback:** without a configured model, or when the call fails, the prototype uses a
+  template. Present this as template output, not evidence of a successful AI call.
+
+**Why not let the model decide?** Eligibility and tone need traceable, repeatable rules.
+Tests of those rules do not prove the accuracy of generated wording. Human review remains
+necessary, and approval in this prototype only records a decision.
+
+**Speaker line (30s):** "The AI writes the reminder; it does not decide who to chase.
+Rules choose eligibility and tone, and a person checks the result. If the model is
+unavailable, we show a template instead. No message is sent by this prototype."
+
+**If asked “Why not just use templates?”:** "Templates are a valid baseline, and we already
+support them. AI may help when wording needs to reflect different promise histories, but
+we have not demonstrated that advantage yet. We will compare review time, corrections
+and factual errors. If AI adds no value, the rule-and-template workflow is still useful."
 
 ---
 
 ## Slide 5 — Orbyte fit: reuse, not rebuild
 
-**Title:** Seven things Orbyte already has. We wrote none of them.
+**Title:** A proposed Orbyte module, demonstrated with replay data.
 
-Table straight from the `/` page (`How this plugs into Orbyte`): identity, approvals, audit
-trail, notifications, document storage, AI business context, customer records — five consumed
-today, two marked `planned` in the UI, which is also what the Tech Declaration says.
+The repository includes a sample export and a mapping adapter. The current demonstration
+reads replay data and writes local records; it does not establish live Orbyte identity,
+approvals, audit, notifications or document-storage integration. The live API path is not
+implemented. Platform capabilities and API availability need confirmation from current
+provider documentation before a pilot.
 
-One sentence that wins this slide: **"This is a module an SME switches on, not a system it
-migrates to."**
+**Positioning:** "We propose adding promise-aware follow-up to an existing SME workflow,
+rather than asking the customer to replace their accounting system."
 
-**Speaker line (25s):** "Our whole integration surface is an export format they already emit."
+**Speaker line (25s):** "Today we demonstrate the adapter using a sample export. Live
+integration is future work, not something we claim to have connected."
 
 ---
 
 ## Slide 6 — The money, in days not features
 
-**Title:** We don't sell software. We sell days of cash.
+**Title:** Measure preparation time first; validate cash-flow impact in a pilot.
+
+**On-slide copy:**
+
+- Intended benefit: less preparation work without sacrificing factual accuracy.
+- First comparison: manual writing vs template review vs AI-draft review.
+- Report time **and** errors; a faster but less accurate draft is not a successful result.
+
+**Presenter notes — illustrative arithmetic only:** show the following table only if there
+is time to explain its assumptions. Do not use RM7,000 as a headline product result.
 
 | Element | Number | Source of the number |
 |---|---|---|
-| Manual reminder | ~12 min | time-boxed ourselves doing it |
-| Reviewed draft | ~1 min | measured on the review page |
-| Worked example | 7 days × RM30k/month ≈ **RM70k** | stated as an example, **not** as research |
-| Pricing | per invoice volume, inside Orbyte | no own billing, no own acquisition |
+| Manual reminder | 12 min | Illustrative assumption; no timing dataset is supplied |
+| Reviewed draft | 1 min | Illustrative assumption; includes review, not automatic approval |
+| Time example | 20 reminders × (12 − 1) min = **220 min**, about **3.7 hours** | Scenario arithmetic, not measured savings |
+| Cash-flow example | RM30,000 monthly credit sales ÷ 30 days × 7 days = **RM7,000** | Assumes steady sales and a 7-day reduction in collection time; not observed impact |
+| Pricing | Invoice-volume pricing is one option to test | Proposed business model, not existing sales or a provider-approved offer |
 
-**Say it as an example, never as a finding:** "Take a five-person supplier doing RM300k a year…"
-If asked, answer: *"It's a worked example; the real number comes from the customer's own ledger."*
-Claiming research we did not do is the fastest way to lose the room.
+**Say it as an example, never as a finding:** "If a supplier has RM30,000 in monthly credit
+sales and collects seven days earlier, a simplified 30-day-month calculation suggests
+RM7,000 less tied up in receivables. We have not shown that CollectLoop produces that change."
+This is a working-capital illustration, not additional revenue or profit. Do not mix this
+scenario with RM300,000 annual sales, which would require a different calculation.
 
-**SDG 8** in one line: small suppliers don't die of weak demand, they die of cash arriving late.
+**SDG link:** reducing administrative burden and supporting cash-flow management could
+support small-enterprise productivity (SDG 8). This is an intended contribution, not a
+measured employment or development outcome.
+
+**Research ask (about 15s; optional closing wording):** "Our next step is to test this with
+small suppliers: does recording promises improve follow-up decisions, and does AI reduce
+review effort compared with templates? We are seeking feedback and pilot participants,
+not claiming proven collection gains."
 
 ---
 
@@ -146,24 +209,28 @@ Then the ask, in the mentor's language, not ours: *"Tell us which of the three y
 
 | Question | Answer, in one breath |
 |---|---|
-| "How do you deploy this?" | One container on Replit, autoscale, HTTPS. No build step, no `pip install` — standard-library Python, so a cold start is ~0.2s warm / ~6s from sleep. |
-| "Front end and back end?" | Server-rendered HTML + one stylesheet; `http.server` with five routes. Front end is a table and one form. |
-| "Do you have a database?" | No — JSON on disk, atomic writes, append-only audit log chained by SHA-256. For one SME that is the right size; it also means the demo cannot fail on a DB connection. |
-| "Security?" | Mozilla Observatory was D+; we now send CSP (no script sources at all), `nosniff`, `frame-ancestors 'none'`, COOP/CORP, Referrer-Policy, Permissions-Policy and HSTS on every response — including 404s. Target B+. |
+| "How do you deploy this?" | The repository runs a Python web server. Ask the deployment owner to confirm the current published URL and hosting configuration; this imported project has no successful published build as checked on 24 October 2026. No cold-start benchmark is supplied. |
+| "Front end and back end?" | Server-rendered HTML templates and CSS, served by a Python standard-library HTTP server. |
+| "Do you have a database?" | The prototype stores state in JSON and audit entries in a local hash-linked log. This is not proof of production durability, access control or tamper-proof storage. |
+| "Security?" | The code defines security headers. The mentor reported D+ and suggested B+; no current published-site result has been verified. Header presence alone does not establish application security. |
 
 ## Appendix B — accessibility (it is part of the judging, per the mentor)
+
+The following are existing implementation features, not a WCAG conformance assessment.
+Navigation, keyboard access, text contrast, zoom and responsive behaviour still require
+verification by the frontend/testing owners.
 
 - Skip link, `aria-current` on nav, `role="status"` on result banners, `scope="col"` + caption
   on the table, visible focus rings on every control.
 - Base type 15.2px, table 14.2px, nav 14.6px (was 11–13px).
 - No colour-only meaning: status is a word plus a colour.
 
-## Appendix C — what changed because of the 17:40 review
+## Appendix C — mentor feedback and evidence boundaries
 
-| Mentor said | We did | Where to see it |
+| Mentor said | Documentation response / evidence boundary | Where to see it |
 |---|---|---|
-| "Follow WCAG, it's part of judging" | Nav, focus rings, skip link, type scale | every page |
-| "Explain the AI feature" | New page with the real prompt and the three limits | `/ai` |
-| "At least let people upload an invoice" | Form + validation + audit entry | `/upload` |
-| "Try to target B+" (Observatory) | Full security-header set | `curl -I` any page |
-| "Use executive summary format" | This document | this deck |
+| "Follow WCAG, it's part of judging" | Describe existing features without claiming conformance; implementation remains with its owner | Appendix B |
+| "Explain the AI feature" | Explain input, drafting output, rule boundaries, fallback and human review | Slide 4 |
+| "At least let people upload an invoice" | Existing `/upload` is manual data entry, not file upload, OCR or a camera | Research notes |
+| "Try to target B+" (Observatory) | Distinguish the target from a verified scan result | Appendix A |
+| "Use executive summary format" | State problem, solution, evidence, value and limits concisely | Slide 1 |
