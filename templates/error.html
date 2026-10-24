@@ -16,11 +16,21 @@
   </div>
 </header>
 
-<main id="main" class="wrap">
-  <div class="banner warn"><b>Something went wrong.</b><br>{{msg}}</div>
-  <p class="lead">This page exists on purpose: during a live demo, a stack trace on screen is
-    worse than a clear error. Go back to the queue and try the action again.</p>
-  <a class="btn" href="/">← Back to queue</a>
+<main id="main" class="wrap error-page">
+  <section class="error-state" aria-labelledby="error-title">
+    <div class="error-mark" aria-hidden="true">!</div>
+    <div class="error-content">
+      <p class="error-eyebrow">Request not completed</p>
+      <h1 id="error-title">We couldn’t complete that action.</h1>
+      <div class="banner warn error-message" role="alert" aria-label="Error details">{{msg}}</div>
+      <p class="lead">Return to the queue and check whether your change was recorded before trying again.
+        If you were adding an invoice, you can reopen the upload form from there.</p>
+      <div class="error-actions">
+        <a class="btn" href="/">← Return to queue</a>
+        <a class="btn ghost" href="/upload">Upload an invoice</a>
+      </div>
+    </div>
+  </section>
 </main>
 <footer><span>{{app}} · {{team}}</span></footer>
 </body>
