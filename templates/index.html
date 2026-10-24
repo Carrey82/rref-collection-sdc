@@ -23,20 +23,22 @@
 
   <div class="hero">
     <div class="txt">
-      <h1>We chase the promise, not the invoice</h1>
-      <p class="lead">A small supplier loses money — <b>but not because it cannot write a stern
-        email</b>. It loses money because <b>nobody remembers what the customer promised</b>.
-        {{app}} keeps that promise on record, drafts the message only when the promise is
-        gone — and <b>stays quiet when it is still good</b>.</p>
+      <h1>Know when to follow up — and when to wait.</h1>
+      <p class="lead"><b>Problem:</b> payment promises get lost between calls and chats, so small
+        suppliers waste time chasing the wrong invoice. <b>Solution:</b> {{app}} records each promise,
+        holds reminders while it is still open, and prepares a draft when the rules say follow-up is due.</p>
     </div>
     <div class="act">
       <a class="chip chip-gray chip-link" href="/ai">{{llm_state}}</a>
       <span class="chip chip-gray">{{data_source}}</span>
-      <a class="btn ghost" href="/upload">Upload invoice</a>
+      <a class="btn" href="/upload">Add an invoice</a>
       <form method="post" action="/scan" style="margin:0">
-        <button class="btn" type="submit">Run today's scan →</button>
+        <button class="btn ghost" type="submit">Run today's scan →</button>
       </form>
     </div>
+    <p class="action-note"><b>Start here:</b> add an invoice manually, or run the scan on invoices already in the ledger.
+      It does not open a camera or read QR codes; drafts are never sent automatically.
+      <a href="/ai">See what AI writes →</a></p>
   </div>
 
   <div class="cards">{{cards}}</div>

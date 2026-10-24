@@ -21,18 +21,36 @@
 
   <div class="hero">
     <div class="txt">
-      <h1>Where the AI actually is</h1>
-      <p class="lead">Straight answer first: <b>one function, one API call, one paragraph.</b>
-        The model writes the sentence. It does not choose who gets chased, it does not know any
-        date that is not on record, and it cannot send anything. Everything else on this page
-        is the part that makes that sentence safe to send.</p>
+      <h1>AI writes the reminder. Rules decide what happens.</h1>
+      <p class="lead"><b>Yes — this is email copywriting.</b> When the rules say follow-up is due,
+        the model writes the reminder body from invoice and recorded-promise facts. If no model is
+        configured, a built-in template writes the draft instead. A person reviews every draft;
+        nothing is sent automatically.</p>
     </div>
     <div class="act"><span class="chip {{model_cls}}">{{model_label}}</span></div>
   </div>
 
+  <div class="ai-role-grid" aria-label="Who does what">
+    <article class="ai-role">
+      <p class="ai-role-kicker">RULES · DECIDE</p>
+      <h2>Who needs a draft — and when to wait</h2>
+      <p>Python checks due dates and promises, then selects the reminder tone. An open promise keeps the invoice on hold.</p>
+    </article>
+    <article class="ai-role ai-role-feature">
+      <p class="ai-role-kicker">AI OR TEMPLATE · WRITE</p>
+      <h2>Turn recorded facts into a clear email</h2>
+      <p>The model writes only the email body. If it is unavailable, a built-in template keeps the demo working.</p>
+    </article>
+    <article class="ai-role">
+      <p class="ai-role-kicker">A PERSON · APPROVE</p>
+      <h2>Review before anything leaves</h2>
+      <p>A person can edit, approve or skip the draft. The app does not send messages automatically.</p>
+    </article>
+  </div>
+
   <div class="panel">
     <div class="head">
-      <h2>One pass through the chain</h2>
+      <h2>The full workflow</h2>
       <span class="chip chip-green" style="margin-left:auto">1 of 5 steps is AI</span>
     </div>
     <div class="body">
@@ -40,6 +58,26 @@
       <p class="hint">Read the badges down the right: <b>human</b>, <b>rule</b>, <b>AI</b>,
         <b>code</b>. The AI badge appears exactly once. That is the whole claim — not that we
         use a lot of AI, but that we put it in the one place where being wrong is cheap.</p>
+    </div>
+  </div>
+
+  <div class="panel architecture-panel">
+    <div class="head">
+      <h2>How this MVP is built</h2>
+      <span class="chip chip-gray" style="margin-left:auto">Prototype architecture</span>
+    </div>
+    <div class="body">
+      <dl class="architecture-grid">
+        <div><dt>Frontend</dt><dd>Server-rendered HTML and shared CSS; no browser-side JavaScript or build step.</dd></div>
+        <div><dt>Backend</dt><dd>Python 3 standard-library HTTP server; deterministic rules handle dates, promises and priority.</dd></div>
+        <div><dt>AI</dt><dd>Optional OpenAI-compatible endpoint for draft wording, with a built-in template fallback.</dd></div>
+        <div><dt>Data</dt><dd>Local JSON files for invoice/state data and a JSONL audit log. There is no separate SQL database.</dd></div>
+        <div><dt>Orbyte</dt><dd>Default demo mode reads a sample export; the live Orbyte API path is not implemented yet.</dd></div>
+        <div><dt>Deployment</dt><dd>Replit runs <code>python3 src/app.py</code>; port 8080 is mapped to the web port.</dd></div>
+        <div><dt>Security</dt><dd>Security headers and CSP are tested; this prototype has no per-customer login or data boundary.</dd></div>
+      </dl>
+      <p class="architecture-note"><b>Prototype boundary:</b> the JSON store is for a single demo workflow, not isolated customer accounts.
+        A multi-customer production version would need authenticated access and database-level access controls.</p>
     </div>
   </div>
 
