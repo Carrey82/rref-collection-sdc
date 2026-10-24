@@ -38,7 +38,7 @@ DOMAIN = "Domain 2 — Orbyte Smart SME Challenge"
 SDG = "SDG 8 — Decent Work and Economic Growth (primary); SDG 9 — Industry, Innovation and Infrastructure (secondary)"
 LEADER = "XIE KAIRUI"
 UNIVERSITY = "Xiamen University Malaysia"
-LIVE_URL = "https://collectloop.app.workbuddy.host/?sharecode=H3YSSVLHAH"
+LIVE_URL = "https://rref-collection-sdc.replit.app"
 REPO_URL = "https://github.com/Carrey82/rref-collection-sdc"
 
 
